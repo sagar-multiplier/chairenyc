@@ -3,19 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chaire NYC Website Prototype</title>
+<title>Chai Real Estate Website Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* Chaire NYC prototype tokens (brief-specified palette, contrast-checked) */
+  /* Chai Real Estate prototype tokens (brief-specified palette, contrast-checked) */
   --ivory:#F7F5F0; --paper:#FFFFFF; --ink:#242B29; --ink-2:#575E5B; --ink-3:#7A807C;
   --stone:#D8D3C8; --stone-2:#ECE8DF; --bronze:#A47550; --bronze-ink:#7E5538;
   --ok:#2E6A49; --ok-bg:#E3EEE6; --warn:#875A10; --warn-bg:#F5ECD9; --bad:#A3392B; --bad-bg:#F6E3DF; --info:#3D5568; --info-bg:#E4EAEF;
   --serif:"Newsreader","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
   --sans:"Hanken Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --max:1320px; --gut:clamp(16px,3.4vw,44px); --hdr:72px;
+  --max:1320px; --gut:clamp(20px,5.5vw,80px); --hdr:76px;
+  --wm-serif:"Cormorant Garamond","Newsreader",Georgia,serif; --wm-brown:#6E5641;
   /* Layout idea: left-aligned editorial grid; photography bleeds off the right edge; the search bar overlaps the hero image */
   color-scheme:light;
 }
@@ -73,9 +74,15 @@ img.ph:not([data-g]){opacity:1}
 .tag.dark{background:var(--ink);color:var(--ivory)}
 
 /* wordmark */
-.wm{display:inline-flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink)}
-.wm b{font:450 20px/1 var(--serif);letter-spacing:.24em;margin-right:-.24em}
-.wm i{font:600 10.5px/1 var(--sans);letter-spacing:.26em;font-style:normal;color:var(--bronze-ink);padding-left:11px;border-left:1px solid var(--stone);height:14px;display:inline-flex;align-items:center}
+/* wordmark: CHAI (serif) + RE + rule + NYC, after the client's supplied mark */
+.wm{--wm:27px;display:inline-flex;align-items:baseline;text-decoration:none;color:var(--ink);font-size:var(--wm);line-height:1;white-space:nowrap}
+.wm b{font:500 1em/1 var(--wm-serif);letter-spacing:.11em}
+.wm .re,.wm .nyc{font:500 max(10px,.5em)/1 var(--sans);letter-spacing:.24em;color:var(--wm-brown)}
+.wm .re{margin-left:.5em}
+.wm .nyc{position:relative;margin-left:.36em;padding-left:.72em}
+.wm .nyc::before{content:"";position:absolute;left:0;bottom:0;height:1.6em;width:1px;background:var(--stone)}
+.wm.xl{--wm:clamp(42px,9.5vw,136px)}
+.wm.xl .nyc::before{background:#C9C2B5}
 
 /* header */
 .hdr{position:sticky;top:0;z-index:50;background:rgba(247,245,240,.94);-webkit-backdrop-filter:saturate(1.3) blur(12px);backdrop-filter:saturate(1.3) blur(12px);border-bottom:1px solid transparent;transition:border-color .25s}
@@ -205,8 +212,7 @@ img.ph:not([data-g]){opacity:1}
 
 /* footer */
 .ftr{background:var(--stone-2);padding:clamp(56px,7vw,96px) 0 36px;margin-top:0}
-.ftr-mark{font:350 clamp(48px,10vw,150px)/.9 var(--serif);letter-spacing:.16em;margin:0 0 clamp(36px,5vw,64px) -.04em;color:var(--ink);white-space:nowrap}
-.ftr-mark span{font:600 clamp(12px,1.2vw,16px)/1 var(--sans);letter-spacing:.3em;color:var(--bronze-ink);vertical-align:top;margin-left:12px}
+.ftr-mark{margin:0 0 clamp(36px,5vw,64px) -.03em}
 .ftr-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;padding-bottom:40px;border-bottom:1px solid var(--stone)}
 .ftr h4{font:600 13.5px/1.4 var(--sans);margin-bottom:14px;color:var(--ink)}
 .ftr li{margin:8px 0;font-size:15px}
@@ -219,7 +225,7 @@ img.ph:not([data-g]){opacity:1}
 .ftr-fine{margin-top:20px;font-size:12.5px;color:var(--ink-2);max-width:90ch}
 
 /* page head */
-.page-head{padding:clamp(36px,5vw,72px) 0 clamp(24px,3vw,40px)}
+.page-head{padding-top:clamp(36px,5vw,72px);padding-bottom:clamp(24px,3vw,40px)}
 .page-head .lede{margin-top:16px}
 .crumbs{font-size:14px;color:var(--ink-2);padding:22px 0 18px;display:flex;gap:8px;flex-wrap:wrap}
 .crumbs a{color:var(--ink-2)}
@@ -436,12 +442,12 @@ dialog::backdrop{background:rgba(26,30,29,.72)}
 .lb-cap{padding:14px 20px 20px;font-size:13px;color:rgba(241,238,232,.75);text-align:center}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:var(--ink);color:var(--ivory);padding:13px 18px;border-radius:2px;font-size:14.5px;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);box-shadow:0 12px 30px -12px rgba(0,0,0,.4)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-.proto{position:fixed;left:16px;bottom:16px;z-index:120;font-size:13.5px}
+.proto{position:fixed;right:16px;bottom:16px;z-index:120;font-size:13.5px}
 .proto>button{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--stone);background:var(--paper);box-shadow:0 8px 24px -12px rgba(0,0,0,.3);font-weight:500}
 .proto .pl-s{display:none}
 @media (max-width:640px){.proto .pl-l{display:none}.proto .pl-s{display:inline}.proto>button{height:34px;padding:0 12px}}
 .proto>button i{width:8px;height:8px;border-radius:50%;background:var(--bronze)}
-.proto-menu{position:absolute;left:0;bottom:46px;background:var(--paper);border:1px solid var(--stone);box-shadow:0 18px 40px -20px rgba(0,0,0,.35);width:270px;padding:8px;display:none}
+.proto-menu{position:absolute;right:0;bottom:46px;background:var(--paper);border:1px solid var(--stone);box-shadow:0 18px 40px -20px rgba(0,0,0,.35);width:270px;padding:8px;display:none}
 .proto.open .proto-menu{display:block}
 .proto-menu p{padding:8px 10px 6px;color:var(--ink-2);font-size:12.5px}
 .proto-menu a,.proto-menu label{display:flex;gap:10px;align-items:center;padding:9px 10px;text-decoration:none;border-radius:2px}
@@ -490,6 +496,7 @@ dialog::backdrop{background:rgba(26,30,29,.72)}
 }
 @media (max-width:640px){
   :root{--hdr:64px}
+  .hdr .wm{--wm:22px}
   .grid3,.hoods{grid-template-columns:1fr}
   .hoods{gap:28px}
   .hood-media{aspect-ratio:16/11}
@@ -551,7 +558,7 @@ dialog::backdrop{background:rgba(26,30,29,.72)}
 .adm h2{font-family:var(--sans)}
 .adm-side{position:sticky;top:0;height:100vh;background:var(--paper);border-right:1px solid var(--stone);display:flex;flex-direction:column;padding:16px 12px;z-index:60}
 .adm-brand{padding:6px 8px 16px;border-bottom:1px solid var(--stone-2);margin-bottom:10px}
-.adm-brand .wm b{font-size:16px}
+.adm-brand .wm{--wm:22px}
 .adm-nav{display:grid;gap:2px}
 .adm-nav a{display:flex;align-items:center;gap:10px;height:38px;padding:0 10px;border-radius:6px;text-decoration:none;color:var(--ink-2);font-weight:500}
 .adm-nav a svg{width:18px;height:18px;flex:none}
@@ -565,16 +572,14 @@ dialog::backdrop{background:rgba(26,30,29,.72)}
 .who span{font-size:12.5px;color:var(--ink-2)}
 .adm-main{min-width:0;display:flex;flex-direction:column}
 .adm-scrim{display:none}
-.is-admin .proto{left:auto;right:16px}
-.is-admin .proto-menu{left:auto;right:0}
-.adm-top{height:60px;display:flex;align-items:center;gap:12px;padding:0 28px;border-bottom:1px solid var(--stone);background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40}
+.adm-top{height:60px;display:flex;align-items:center;gap:12px;padding:0 40px;border-bottom:1px solid var(--stone);background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40}
 .adm-crumb{font-weight:600}
 .adm-crumb span{color:var(--ink-2);font-weight:400}
 .adm-top .sp{margin-left:auto}
 .adm-demo{font-size:12px;font-weight:600;color:var(--warn);background:var(--warn-bg);border-radius:999px;padding:3px 10px}
 .ab.adm-menu{display:none}
-.adm-banner{font-size:13px;color:var(--ink-2);padding:9px 28px;border-bottom:1px solid var(--stone);background:#FAF8F3}
-.adm-body{padding:28px;width:100%;max-width:1280px}
+.adm-banner{font-size:13px;color:var(--ink-2);padding:9px 40px;border-bottom:1px solid var(--stone);background:#FAF8F3}
+.adm-body{padding:32px 40px;width:100%;max-width:1320px}
 .adm-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:22px;flex-wrap:wrap}
 .adm-head p{color:var(--ink-2);margin-top:4px}
 .adm-head .row{display:flex;gap:8px;flex-wrap:wrap}
@@ -760,10 +765,10 @@ dialog::backdrop{background:rgba(26,30,29,.72)}
   .adm-scrim{position:fixed;inset:0;background:rgba(26,30,29,.4);z-index:55;display:none}
   .adm-side.open+.adm-scrim{display:block}
   .ab.adm-menu{display:inline-flex}
-  .adm-top{padding:0 16px}
+  .adm-top{padding:0 20px}
   .adm-top .vs{display:none}
-  .adm-banner{padding:9px 16px}
-  .adm-body{padding:20px 16px 120px}
+  .adm-banner{padding:9px 20px}
+  .adm-body{padding:24px 20px 120px}
   .iq{grid-template-columns:1fr}
   .iq-list{border-right:0;border-bottom:1px solid var(--stone);max-height:340px;min-height:0}
   .edit-aside{grid-template-columns:1fr}
@@ -830,7 +835,7 @@ dialog::backdrop{background:rgba(26,30,29,.72)}
 <dialog id="dlg" aria-label="Dialog"></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
-/* Chaire image engine.
+/* Chai Real Estate image engine.
    Artifacts cannot load remote photos, so every photography slot is drawn locally as an
    illustrative architectural rendering (facades, rooms, lofts, rooftops). Swap for real photos later. */
 const IMG = (() => {
@@ -1408,12 +1413,12 @@ const RENTER_STATUSES = ['New', 'Contacted', 'Tour scheduled', 'Applied', 'Close
 const OWNER_STATUSES = ['New', 'In conversation', 'Proposal sent', 'Signed', 'Not a fit'];
 const SEED_CONTENT = () => ({
   heroTitle: 'A better way to find your place in New York.',
-  heroSub: 'Browse apartments with every fee listed up front, then book a viewing in a couple of minutes. Own or manage a building? Chaire can lease it for you.',
+  heroSub: 'Browse apartments with every fee listed up front, then book a viewing in a couple of minutes. Own or manage a building? Chai Real Estate can lease it for you.',
   ownerTitle: 'Your vacancy, handled from listing to lease.',
-  ownerBody: 'Chaire markets your apartment, answers the people who ask about it, runs the viewings and sends you a written update every week until a lease is signed.',
+  ownerBody: 'Chai Real Estate markets your apartment, answers the people who ask about it, runs the viewings and sends you a written update every week until a lease is signed.',
   testimonials: [],
 });
-const SEED_SETTINGS = () => ({ name: 'Chaire NYC', phone: '', email: '', office: '', license: '', hours: '', notify: '' });
+const SEED_SETTINGS = () => ({ name: 'Chai Real Estate', phone: '', email: '', office: '', license: '', hours: '', notify: '' });
 
 /* ---------- core ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1489,7 +1494,7 @@ function header(page) {
   const items = [['apartments', 'Apartments'], ['buildings', 'Buildings'], ['owners', 'For Owners'], ['about', 'About']];
   return `<a class="skip" href="#main" data-act="skip">Skip to content</a>
   <header class="hdr" id="hdr"><div class="wrap">
-    <a class="wm" href="#home" aria-label="Chaire NYC, home"><b>CHAIRE</b><i>NYC</i></a>
+    <a class="wm" href="#home" aria-label="Chai Real Estate NYC, home"><b>CHAI</b><span class="re">RE</span><span class="nyc">NYC</span></a>
     <nav class="nav" aria-label="Main">${items.map(([h, t]) => `<a href="#${h}"${page === h ? ' aria-current="page"' : ''}>${t}</a>`).join('')}<a class="btn sm ghost" href="#contact"${page === 'contact' ? ' aria-current="page"' : ''}>Contact</a></nav>
     <button class="menu-btn" type="button" data-act="menu" aria-expanded="false" aria-controls="mnav">${ico.menu}<span>Menu</span></button>
   </div></header>
@@ -1499,7 +1504,7 @@ function footer() {
   const st = S.settings, v = (x, label) => x ? esc(x) : `<span class="ph-txt">${label} to be supplied</span>`;
   const docs = [['fairhousing', 'NYS Housing and Anti-Discrimination Notice'], ['sop', 'Standard Operating Procedures'], ['agency', 'Agency Disclosure'], ['privacy', 'Privacy'], ['terms', 'Terms of use']];
   return `<footer class="ftr"><div class="wrap">
-    <p class="ftr-mark" aria-hidden="true">CHAIRE<span>NYC</span></p>
+    <p class="ftr-mark" aria-hidden="true"><span class="wm xl"><b>CHAI</b><span class="re">RE</span><span class="nyc">NYC</span></span></p>
     <div class="ftr-grid">
       <div><h4>Contact</h4><ul><li>${v(st.phone, 'Phone')}</li><li>${v(st.email, 'Email')}</li><li>${v(st.office, 'Office address')}</li><li>${v(st.hours, 'Office hours')}</li></ul></div>
       <div><h4>Renters</h4><ul><li><a href="#apartments">Apartments</a></li><li><a href="#buildings">Buildings</a></li><li><a href="#home" data-act="to" data-target="hoods-h">Neighborhoods</a></li></ul></div>
@@ -1507,14 +1512,14 @@ function footer() {
       <div><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#contact">Contact</a></li><li><a href="#admin">Founder admin (demo)</a></li></ul></div>
     </div>
     <div class="ftr-legal">${docs.map(([k, t]) => `<button type="button" data-act="legal" data-doc="${k}">${t}</button>`).join('')}</div>
-    <p class="ftr-fine">${esc(st.name)} is a licensed real estate brokerage. ${st.license ? esc(st.license) : '<span class="ph-txt">License details to be supplied.</span>'} Equal Housing Opportunity. Listings, photographs and figures on this prototype are illustrative samples. © 2026 ${esc(st.name)}.</p>
+    <p class="ftr-fine">${esc(st.name)}, New York. ${st.license ? esc(st.license) : '<span class="ph-txt">License details to be supplied.</span>'} Equal Housing Opportunity. Listings, photographs and figures on this prototype are illustrative samples. © 2026 ${esc(st.name)}.</p>
   </div></footer>`;
 }
 const LEGAL = {
-  fairhousing: ['NYS Housing and Anti-Discrimination Notice', 'Placeholder for the New York State Housing and Anti-Discrimination Notice. Chaire will add the official notice text here before launch.'],
-  sop: ['Standard Operating Procedures', 'Placeholder for Chaire\'s written procedures for prospective tenants: identification, pre-approval and application requirements. To be supplied by Chaire before launch.'],
-  agency: ['Agency Disclosure', 'Placeholder for the New York agency disclosure form that explains who a broker represents in a rental. To be supplied by Chaire before launch.'],
-  privacy: ['Privacy', 'Placeholder for Chaire\'s privacy policy, covering how inquiry and application details are stored and shared.'],
+  fairhousing: ['NYS Housing and Anti-Discrimination Notice', 'Placeholder for the New York State Housing and Anti-Discrimination Notice. Chai Real Estate will add the official notice text here before launch.'],
+  sop: ['Standard Operating Procedures', 'Placeholder for Chai Real Estate\'s written procedures for prospective tenants: identification, pre-approval and application requirements. To be supplied by Chai Real Estate before launch.'],
+  agency: ['Agency Disclosure', 'Placeholder for the New York agency disclosure form that explains who a broker represents in a rental. To be supplied by Chai Real Estate before launch.'],
+  privacy: ['Privacy', 'Placeholder for Chai Real Estate\'s privacy policy, covering how inquiry and application details are stored and shared.'],
   terms: ['Terms of use', 'Placeholder for the website terms of use.'],
 };
 function openDialog(html, cls = '') {
@@ -1543,7 +1548,7 @@ function viewHome() {
   const steps = (arr) => `<ol class="steps">${arr.map(([t, p], i) => `<li><span class="num" aria-hidden="true">${i + 1}</span><b>${t}</b><p>${p}</p></li>`).join('')}</ol>`;
   const tms = c.testimonials.slice(0, 3);
   const slots = [0, 1, 2].map(i => tms[i] ? `<figure class="slot real"><blockquote class="q">“${esc(tms[i].quote)}”</blockquote><figcaption class="who"><b>${esc(tms[i].name)}</b><br>${esc(tms[i].context)}</figcaption></figure>`
-    : `<div class="slot"><p class="q">Space reserved for a verified ${i === 1 ? 'owner' : 'renter'} review.</p><p class="who">Name, ${i === 1 ? 'building type' : 'apartment or neighborhood'}, and the date Chaire confirmed it.</p></div>`).join('');
+    : `<div class="slot"><p class="q">Space reserved for a verified ${i === 1 ? 'owner' : 'renter'} review.</p><p class="who">Name, ${i === 1 ? 'building type' : 'apartment or neighborhood'}, and the date Chai Real Estate confirmed it.</p></div>`).join('');
   return `
   <section class="hero" aria-labelledby="main-h">
     <div class="wrap hero-grid">
@@ -1552,7 +1557,7 @@ function viewHome() {
         <p class="lede">${esc(c.heroSub)}</p>
         <div class="cta-row"><a class="btn" href="#apartments">Explore apartments</a><a class="btn ghost" href="#owners">Lease your property</a></div>
       </div>
-      <figure class="hero-fig">${pimg({ g: 'facade-brick-fe-top-gold', s: 3 }, 'hero', 'Illustrative rendering of a brick walk-up with a fire escape in late afternoon light')}<figcaption>Illustrative rendering, to be replaced with Chaire photography</figcaption></figure>
+      <figure class="hero-fig">${pimg({ g: 'facade-brick-fe-top-gold', s: 3 }, 'hero', 'Illustrative rendering of a brick walk-up with a fire escape in late afternoon light')}<figcaption>Illustrative rendering, not a photo</figcaption></figure>
     </div>
     <div class="wrap">
       <form class="search" id="f-search" role="search" aria-label="Search apartments">
@@ -1569,7 +1574,7 @@ function viewHome() {
   </section>
 
   <section class="sec" aria-labelledby="feat-h"><div class="wrap">
-    <div class="sec-head"><div><h2 class="t-1" id="feat-h">Featured apartments</h2><p class="lede">Sample listings that show how Chaire's real inventory will appear.</p></div><a class="textlink" href="#apartments">See all ${all.length} apartments</a></div>
+    <div class="sec-head"><div><h2 class="t-1" id="feat-h">Featured apartments</h2><p class="lede">Sample listings that show how Chai Real Estate's apartments will appear.</p></div><a class="textlink" href="#apartments">See all ${all.length} apartments</a></div>
     <div class="grid3">${feat.map(card).join('')}</div>
   </div></section>
 
@@ -1596,14 +1601,14 @@ function viewHome() {
   <section class="sec" aria-labelledby="how-h"><div class="wrap">
     <div class="sec-head"><h2 class="t-1" id="how-h">How it works</h2></div>
     <div class="how">
-      <div><h3>Renting with Chaire</h3>${steps([['Find a place you like', 'Filter by neighborhood, rent, bedrooms and move-in date. Each listing shows its fees in writing.'], ['Request a viewing', 'Pick a day and a time window. Chaire confirms by email.'], ['Apply and sign', 'Submit your application, review an itemized fee disclosure, then sign the lease.']])}</div>
-      <div><h3>Leasing with Chaire</h3>${steps([['Tell us about the property', 'Share the location, the number of units and when they become available.'], ['Review a leasing proposal', 'Pricing guidance, a marketing plan and terms, in writing.'], ['Chaire leases it', 'Marketing, viewings and applications, with a written update every week.']])}</div>
+      <div><h3>Renting with Chai Real Estate</h3>${steps([['Find a place you like', 'Filter by neighborhood, rent, bedrooms and move-in date. Each listing shows its fees in writing.'], ['Request a viewing', 'Pick a day and a time window. Chai Real Estate confirms by email.'], ['Apply and sign', 'Submit your application, review an itemized fee disclosure, then sign the lease.']])}</div>
+      <div><h3>Leasing with Chai Real Estate</h3>${steps([['Tell us about the property', 'Share the location, the number of units and when they become available.'], ['Review a leasing proposal', 'Pricing guidance, a marketing plan and terms, in writing.'], ['Chai Real Estate leases it', 'Marketing, viewings and applications, with a written update every week.']])}</div>
     </div>
   </div></section>
 
   <section class="sec tight" aria-labelledby="rev-h" style="padding-top:0"><div class="wrap">
     <hr class="rule" style="margin-bottom:clamp(48px,6vw,80px)">
-    <div class="sec-head"><div><h2 class="t-1" id="rev-h">From renters and owners</h2><p class="lede">Reviews appear here once Chaire has confirmed them with the person who wrote them.</p></div></div>
+    <div class="sec-head"><div><h2 class="t-1" id="rev-h">From renters and owners</h2><p class="lede">Reviews appear here once Chai Real Estate has confirmed them with the person who wrote them.</p></div></div>
     <div class="slots">${slots}</div>
   </div></section>`;
 }
@@ -1615,7 +1620,7 @@ function viewApartments() {
   const seg = (k, opts) => opts.map(([v, t]) => `<button type="button" data-act="seg" data-k="${k}" data-v="${v}" aria-pressed="${f[k] === v}">${t}</button>`).join('');
   const opt = (sel, list, any) => `<option value="0">${any}</option>` + list.map(v => `<option value="${v}" ${+sel === v ? 'selected' : ''}>${money(v)}</option>`).join('');
   const all = pub();
-  return `<section class="wrap page-head"><h1 class="t-1" id="main-h" tabindex="-1">Apartments for rent</h1><p class="lede">Sample listings in Williamsburg, Greenpoint, Astoria and Ridgewood. Filter by rent, size and move-in date.</p><p class="note" style="margin-top:16px"><b>Review note:</b> every listing is a fictional sample until Chaire supplies real inventory.</p></section>
+  return `<section class="wrap page-head"><h1 class="t-1" id="main-h" tabindex="-1">Apartments for rent</h1><p class="lede">Sample listings in Williamsburg, Greenpoint, Astoria and Ridgewood. Filter by rent, size and move-in date.</p><p class="note" style="margin-top:16px"><b>Review note:</b> every listing is a fictional sample until Chai Real Estate supplies its own.</p></section>
   <div class="fbar">
     <form class="wrap fb" id="fb" role="search" aria-label="Filter apartments">
       <div class="fld q"><label for="f-q">Search</label><input class="inp" id="f-q" type="search" placeholder="Street, building or feature" value="${esc(f.q)}" autocomplete="off"></div>
@@ -1665,7 +1670,7 @@ function renderResults() {
 
 /* ---------- buildings ---------- */
 function viewBuildings() {
-  return `<section class="wrap page-head"><h1 class="t-1" id="main-h" tabindex="-1">Buildings</h1><p class="lede">Each building page gathers its available apartments, access details and the neighborhood in one place.</p><p class="note" style="margin-top:16px"><b>Review note:</b> sample buildings. Real building names and photos to be supplied by Chaire.</p></section>
+  return `<section class="wrap page-head"><h1 class="t-1" id="main-h" tabindex="-1">Buildings</h1><p class="lede">Each building page gathers its available apartments, access details and the neighborhood in one place.</p><p class="note" style="margin-top:16px"><b>Review note:</b> sample buildings. Real building names and photos to be supplied by Chai Real Estate.</p></section>
   <section class="wrap" style="padding-bottom:clamp(64px,8vw,120px)">${BUILDINGS.map(b => {
     const n = pub().filter(l => l.building === b.id);
     return `<article class="bld"><div class="bld-media">${pimg(b.photo, 'land', `Illustrative rendering of the ${b.name}`)}</div><div><span class="tag dark">Sample building</span><h2 style="margin-top:14px">${esc(b.name)}</h2><dl><dt>Neighborhood</dt><dd>${b.hood}, ${HOODS[b.hood].borough}</dd><dt>Location</dt><dd>Near ${esc(b.cross)}</dd><dt>Building</dt><dd>${b.type}, ${b.floors} floors, ${b.access.toLowerCase()}</dd><dt>Trains</dt><dd>${lineBul(HOODS[b.hood].lines.slice(0, 3))}</dd></dl>
@@ -1689,7 +1694,7 @@ function feeTable(l) {
   const row = (t, amt, why) => `<tr><th scope="row">${t}<span class="why-m">${why}</span></th><td class="why">${why}</td><td class="amt">${amt}</td></tr>`;
   return `<div class="fee-badge">${ico.check} No broker fee for renters on this listing</div>
   <table class="fees"><caption class="sr">Fees a renter pays for this apartment</caption><tbody>
-    ${row('Broker fee', '$0', 'Chaire represents the owner on this listing, so the owner pays Chaire.')}
+    ${row('Broker fee', '$0', 'Chai Real Estate represents the owner on this listing, so the owner pays Chai Real Estate.')}
     ${row('Application fee', money(app), 'Covers the background and credit check. New York caps it at $20.')}
     ${row('Security deposit', money(dep), 'Refundable. New York limits it to one month\'s rent.')}
     ${row('First month\'s rent', money(l.rent), 'Due when you sign the lease.')}
@@ -1718,7 +1723,7 @@ function mapSVG(l) {
   </svg></div>`;
 }
 function inquiryForm(l, done) {
-  if (done) return `<div class="success" role="status" tabindex="-1" id="inq-ok"><span class="mark">${ico.check}</span><h3>Request received</h3><p>Thanks, ${esc(done.name.split(' ')[0])}. Chaire will reply by email to confirm a time${done.tour ? ` on ${fdate(done.tour)}` : ''}.</p><p class="small">This is a prototype, so no email was sent. Your request is in the admin demo inbox.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn sm" href="#admin-inquiries" data-act="iq-jump" data-id="${done.id}">View in admin demo</a><button class="btn ghost sm" type="button" data-act="inq-again">Send another request</button></div></div>`;
+  if (done) return `<div class="success" role="status" tabindex="-1" id="inq-ok"><span class="mark">${ico.check}</span><h3>Request received</h3><p>Thanks, ${esc(done.name.split(' ')[0])}. Chai Real Estate will reply by email to confirm a time${done.tour ? ` on ${fdate(done.tour)}` : ''}.</p><p class="small">This is a prototype, so no email was sent. Your request is in the admin demo inbox.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn sm" href="#admin-inquiries" data-act="iq-jump" data-id="${done.id}">View in admin demo</a><button class="btn ghost sm" type="button" data-act="inq-again">Send another request</button></div></div>`;
   return `<form class="form" id="f-inquiry" novalidate data-id="${l.id}">
     ${field({ id: 'i-name', label: 'Full name', attrs: 'autocomplete="name"' })}
     ${field({ id: 'i-email', label: 'Email', type: 'email', attrs: 'autocomplete="email"' })}
@@ -1726,7 +1731,7 @@ function inquiryForm(l, done) {
     <div class="two">${field({ id: 'i-date', label: 'Preferred day', type: 'date', attrs: `min="${TODAY}"` })}${field({ id: 'i-time', label: 'Time', type: 'select', options: ['Morning', 'Afternoon', 'Evening', 'Any time'] })}</div>
     ${field({ id: 'i-msg', label: 'Message', type: 'textarea', opt: true, rows: 3, ph: 'Move-in date, pets, questions about the apartment' })}
     <button class="btn block" type="submit">Request a tour</button>
-    <p class="form-foot">Chaire uses your details only to arrange this viewing.</p>
+    <p class="form-foot">Chai Real Estate uses your details only to arrange this viewing.</p>
   </form>`;
 }
 function previewObj() { const d = S.draft, hood = HOODS[d.neighborhood] ? d.neighborhood : 'Williamsburg'; return { ...d, id: d.id || 0, title: d.title || 'Untitled listing', neighborhood: hood, borough: HOODS[hood].borough, cross: d.cross || 'cross streets to be added', lines: d.lines?.length ? d.lines : HOODS[hood].lines.slice(0, 1), rent: +d.rent || 0, beds: +d.beds || 0, baths: +d.baths || 1, sqft: +d.sqft || 0 }; }
@@ -1775,7 +1780,7 @@ function weeklyChart() {
   <table class="sr"><caption>Inquiries by day (illustrative)</caption><tr>${d.map(([k]) => `<th>${k}</th>`).join('')}</tr><tr>${d.map(([, v]) => `<td>${v}</td>`).join('')}</tr></table></div>`;
 }
 function proposalForm(done) {
-  if (done) return `<div class="success" role="status" tabindex="-1" id="prop-ok"><span class="mark">${ico.check}</span><h3>Proposal request received</h3><p>Thanks, ${esc(done.name.split(' ')[0])}. Chaire will review the details for ${esc(done.location)} and reply by email to arrange a walkthrough.</p><p class="small">This is a prototype, so no email was sent. Your request is in the admin demo inbox under owner proposals.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn sm" href="#admin-inquiries" data-act="iq-jump" data-id="${done.id}">View in admin demo</a><button class="btn ghost sm" type="button" data-act="prop-again">Send another request</button></div></div>`;
+  if (done) return `<div class="success" role="status" tabindex="-1" id="prop-ok"><span class="mark">${ico.check}</span><h3>Proposal request received</h3><p>Thanks, ${esc(done.name.split(' ')[0])}. Chai Real Estate will review the details for ${esc(done.location)} and reply by email to arrange a walkthrough.</p><p class="small">This is a prototype, so no email was sent. Your request is in the admin demo inbox under owner proposals.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn sm" href="#admin-inquiries" data-act="iq-jump" data-id="${done.id}">View in admin demo</a><button class="btn ghost sm" type="button" data-act="prop-again">Send another request</button></div></div>`;
   return `<form class="form" id="f-proposal" novalidate>
     <div class="two">${field({ id: 'p-name', label: 'Full name', attrs: 'autocomplete="name"' })}${field({ id: 'p-email', label: 'Email', type: 'email', attrs: 'autocomplete="email"' })}</div>
     <div class="two">${field({ id: 'p-phone', label: 'Phone', type: 'tel', opt: true, attrs: 'autocomplete="tel"' })}${field({ id: 'p-units', label: 'Number of units', type: 'number', opt: true, attrs: 'min="1" max="500" inputmode="numeric"' })}</div>
@@ -1783,29 +1788,29 @@ function proposalForm(done) {
     ${field({ id: 'p-time', label: 'When does the apartment need to be leased?', type: 'select', options: [['', 'Choose a timeframe'], 'Vacant now', 'Within 30 days', '1 to 3 months', 'More than 3 months out'] })}
     ${field({ id: 'p-msg', label: 'Message', type: 'textarea', ph: 'Unit types, current rents, what has or has not worked so far' })}
     <button class="btn block" type="submit">Request a leasing proposal</button>
-    <p class="form-foot">Chaire replies by email, usually to set up a walkthrough first.</p>
+    <p class="form-foot">Chai Real Estate replies by email, usually to set up a walkthrough first.</p>
   </form>`;
 }
 function viewOwners() {
-  const svc = [['Pricing guidance', 'A rent recommendation based on comparable apartments nearby, agreed with you before anything goes live.'], ['Listing preparation', 'Photography, a floor plan and a clear description, coordinated so the apartment shows well online.'], ['Marketing', 'Your listing on the Chaire site and the major rental portals, with every tenant fee disclosed as NYC law requires.'], ['Inquiries', 'One point of contact answers every question and checks interest before anyone visits.'], ['Viewings', 'Scheduled showings and open houses, so you don\'t need to be there.'], ['Applications to lease', 'Complete applications, coordinated screening and a lease prepared for your approval.']];
-  const proc = [['Walkthrough', 'Chaire visits the property, learns the building and hears what you need.', 'Week 1'], ['Proposal', 'Pricing guidance, a marketing plan, a timeline and terms, in writing.', 'Within days of the walkthrough'], ['Launch', 'Photos, the listing and marketing go live once you approve them.', 'Week 2'], ['Show and qualify', 'Inquiries answered, viewings held, applications collected and checked.', 'Until the right applicant'], ['Lease and handover', 'You approve the applicant, the lease is signed and keys change hands.', 'Final week']];
+  const svc = [['Pricing guidance', 'A rent recommendation based on comparable apartments nearby, agreed with you before anything goes live.'], ['Listing preparation', 'Photography, a floor plan and a clear description, coordinated so the apartment shows well online.'], ['Marketing', 'Your listing on the Chai Real Estate site and the major rental portals, with every tenant fee disclosed as NYC law requires.'], ['Inquiries', 'One point of contact answers every question and checks interest before anyone visits.'], ['Viewings', 'Scheduled showings and open houses, so you don\'t need to be there.'], ['Applications to lease', 'Complete applications, coordinated screening and a lease prepared for your approval.']];
+  const proc = [['Walkthrough', 'Chai Real Estate visits the property, learns the building and hears what you need.', 'Week 1'], ['Proposal', 'Pricing guidance, a marketing plan, a timeline and terms, in writing.', 'Within days of the walkthrough'], ['Launch', 'Photos, the listing and marketing go live once you approve them.', 'Week 2'], ['Show and qualify', 'Inquiries answered, viewings held, applications collected and checked.', 'Until the right applicant'], ['Lease and handover', 'You approve the applicant, the lease is signed and keys change hands.', 'Final week']];
   const faq = [
-    ['How is Chaire paid?', '<p>Terms are agreed in writing with each owner before marketing starts.</p><p class="note"><b>Review note:</b> commercial terms to be supplied by Chaire.</p>'],
-    ['Who approves the tenant?', '<p>You do. Chaire collects and checks applications and recommends next steps; the decision stays with the owner.</p>'],
-    ['How does the FARE Act affect my listing?', '<p>Since June 2025, a broker hired by the landlord, including one who lists the apartment with the landlord\'s permission, can\'t charge the tenant a broker fee. Listings must also disclose every fee a tenant has to pay.</p><p>Chaire builds that disclosure into every listing. This is general information, not legal advice.</p>'],
+    ['How is Chai Real Estate paid?', '<p>Terms are agreed in writing with each owner before marketing starts.</p><p class="note"><b>Review note:</b> commercial terms to be supplied by Chai Real Estate.</p>'],
+    ['Who approves the tenant?', '<p>You do. Chai Real Estate collects and checks applications and recommends next steps; the decision stays with the owner.</p>'],
+    ['How does the FARE Act affect my listing?', '<p>Since June 2025, a broker hired by the landlord, including one who lists the apartment with the landlord\'s permission, can\'t charge the tenant a broker fee. Listings must also disclose every fee a tenant has to pay.</p><p>Chai Real Estate builds that disclosure into every listing. This is general information, not legal advice.</p>'],
     ['Do you work with management companies and portfolios?', '<p>Yes. The proposal form takes a unit count, and the weekly update can cover several buildings at once.</p><p class="note"><b>Review note:</b> confirm portfolio size limits and coverage areas.</p>'],
-    ['Which neighborhoods do you cover?', '<p class="note"><b>Review note:</b> coverage areas to be supplied by Chaire. The sample site uses Williamsburg, Greenpoint, Astoria and Ridgewood.</p>'],
-    ['What if my apartment needs work before it can be shown?', '<p>The walkthrough covers this. Chaire can suggest which fixes affect rent and which can wait, so you decide what is worth doing before launch.</p>'],
+    ['Which neighborhoods do you cover?', '<p class="note"><b>Review note:</b> coverage areas to be supplied by Chai Real Estate. The sample site uses Williamsburg, Greenpoint, Astoria and Ridgewood.</p>'],
+    ['What if my apartment needs work before it can be shown?', '<p>The walkthrough covers this. Chai Real Estate can suggest which fixes affect rent and which can wait, so you decide what is worth doing before launch.</p>'],
   ];
   return `<section class="o-hero" aria-labelledby="main-h"><div class="wrap o-hero-grid">
     <div style="padding-bottom:clamp(24px,4vw,64px)"><h1 id="main-h" tabindex="-1">Leasing should be the easy part of owning.</h1>
-      <p class="lede" style="margin-top:26px">Chaire markets vacant apartments, answers every inquiry, runs the viewings and keeps you informed each week until a lease is signed. You approve the price, the listing and the tenant.</p>
+      <p class="lede" style="margin-top:26px">Chai Real Estate markets vacant apartments, answers every inquiry, runs the viewings and keeps you informed each week until a lease is signed. You approve the price, the listing and the tenant.</p>
       <div class="cta-row"><button class="btn" type="button" data-act="scrollto" data-target="proposal">Request a leasing proposal</button><button class="btn ghost" type="button" data-act="scrollto" data-target="process-h">See the process</button></div>
-      <p class="note" style="margin-top:24px"><b>Review note:</b> service descriptions on this page are proposals for Chaire to confirm.</p></div>
+      <p class="note" style="margin-top:24px"><b>Review note:</b> service descriptions on this page are proposals for Chai Real Estate to confirm.</p></div>
     <figure class="o-hero-fig" style="margin-top:0;margin-bottom:0">${pimg({ g: 'facade-brown-top-gold', s: 77 }, 'port', 'Illustrative rendering of a brownstone facade')}</figure>
   </div></section>
-  <div class="wrap"><div class="o-intro"><h2 class="t-2">For owners and property managers</h2><p class="big">Most owners don't need another listing site. They need someone to take the phone calls, show the apartment on a Tuesday evening, follow up with applicants and tell them plainly how it is going. That is the job Chaire takes on.</p></div></div>
-  <section class="sec" aria-labelledby="svc-h"><div class="wrap"><div class="sec-head"><div><h2 class="t-1" id="svc-h">What Chaire takes on</h2><p class="lede">Each part can be scoped to your building.</p></div></div>
+  <div class="wrap"><div class="o-intro"><h2 class="t-2">For owners and property managers</h2><p class="big">Most owners don't need another listing site. They need someone to take the phone calls, show the apartment on a Tuesday evening, follow up with applicants and tell them plainly how it is going. That is the job Chai Real Estate takes on.</p></div></div>
+  <section class="sec" aria-labelledby="svc-h"><div class="wrap"><div class="sec-head"><div><h2 class="t-1" id="svc-h">What Chai Real Estate takes on</h2><p class="lede">Each part can be scoped to your building.</p></div></div>
     <ul class="svc">${svc.map(([t, p]) => `<li><h3>${t}</h3><p>${p}</p></li>`).join('')}</ul></div></section>
   <section class="sec" aria-labelledby="mkt-h" style="background:var(--paper);border-top:1px solid var(--stone);border-bottom:1px solid var(--stone)"><div class="wrap split">
     <div><h2 class="t-1" id="mkt-h">From first inquiry to signed lease</h2><p class="lede" style="margin-top:18px">Every inquiry gets a reply and every viewing gets a follow-up. You see what happens at each stage, and why.</p>
@@ -1818,9 +1823,9 @@ function viewOwners() {
     <ol class="process">${proc.map(([t, p, w], i) => `<li><span class="num" aria-hidden="true">${i + 1}</span><h3>${t}</h3><p>${p}</p><p class="when">${w}</p></li>`).join('')}</ol>
     <p class="note" style="margin-top:28px"><b>Review note:</b> timings are placeholders.</p></div></section>
   <section class="sec tight" aria-labelledby="res-h" style="padding-top:0"><div class="wrap"><hr class="rule" style="margin-bottom:clamp(48px,6vw,80px)"><div class="sec-head"><div><h2 class="t-1" id="res-h">Results and case studies</h2><p class="lede">This space is for real outcomes. Each case study will be published with the owner's permission and verified figures.</p></div></div>
-    <div class="cases">${['Row house, Brooklyn', 'Small portfolio, Queens'].map(t => `<article class="case"><div class="h"><h3>${t}</h3><span class="tag dark">Awaiting verified data</span></div><dl><div><dt>Units</dt><dd>—</dd></div><div><dt>Days to lease</dt><dd>—</dd></div><div><dt>Rent vs. asking</dt><dd>—</dd></div></dl><p class="small muted">A short account of the building, the challenge and what Chaire did, approved by the owner.</p></article>`).join('')}</div></div></section>
+    <div class="cases">${['Row house, Brooklyn', 'Small portfolio, Queens'].map(t => `<article class="case"><div class="h"><h3>${t}</h3><span class="tag dark">Awaiting verified data</span></div><dl><div><dt>Units</dt><dd>—</dd></div><div><dt>Days to lease</dt><dd>—</dd></div><div><dt>Rent vs. asking</dt><dd>—</dd></div></dl><p class="small muted">A short account of the building, the challenge and what Chai Real Estate did, approved by the owner.</p></article>`).join('')}</div></div></section>
   <section class="sec" aria-labelledby="wk-title" style="background:var(--stone-2)"><div class="wrap split" style="align-items:center">
-    <div><h2 class="t-1" id="wk-title">A weekly update you can read in two minutes</h2><p class="lede" style="margin-top:18px">Every week while your apartment is on the market, you get a short written update: activity, what renters said, what happens next and any decision Chaire needs from you.</p><p class="note" style="margin-top:20px"><b>Review note:</b> the update to the right is a layout sample with illustrative figures.</p></div>
+    <div><h2 class="t-1" id="wk-title">A weekly update you can read in two minutes</h2><p class="lede" style="margin-top:18px">Every week while your apartment is on the market, you get a short written update: activity, what renters said, what happens next and any decision Chai Real Estate needs from you.</p><p class="note" style="margin-top:20px"><b>Review note:</b> the update to the right is a layout sample with illustrative figures.</p></div>
     <article class="report" aria-label="Sample weekly owner update">
       <div class="report-h"><div><h3>Weekly leasing update</h3><p>Sample property: three-unit walk-up, Ridgewood</p></div><div style="text-align:right"><span class="tag dark">Illustrative</span><p style="margin-top:8px">Week of Oct 26 to Nov 1, 2026</p></div></div>
       <div class="report-b">
@@ -1832,27 +1837,27 @@ function viewOwners() {
     </article>
   </div></section>
   <section class="sec" aria-labelledby="proposal"><div class="wrap split">
-    <div><h2 class="t-1" id="proposal" tabindex="-1">Request a leasing proposal</h2><p class="lede" style="margin-top:18px">Tell us about the property. Chaire will reply to set up a walkthrough, then send a written proposal with pricing guidance, a plan and terms.</p>
-      <ol class="steps" style="margin-top:32px">${[['You send the details', 'Takes about two minutes.'], ['Walkthrough', 'Chaire visits the property with you.'], ['Written proposal', 'Pricing, plan, timeline and terms.']].map(([t, p], i) => `<li><span class="num" aria-hidden="true">${i + 1}</span><b>${t}</b><p>${p}</p></li>`).join('')}</ol></div>
+    <div><h2 class="t-1" id="proposal" tabindex="-1">Request a leasing proposal</h2><p class="lede" style="margin-top:18px">Tell us about the property. Chai Real Estate will reply to set up a walkthrough, then send a written proposal with pricing guidance, a plan and terms.</p>
+      <ol class="steps" style="margin-top:32px">${[['You send the details', 'Takes about two minutes.'], ['Walkthrough', 'Chai Real Estate visits the property with you.'], ['Written proposal', 'Pricing, plan, timeline and terms.']].map(([t, p], i) => `<li><span class="num" aria-hidden="true">${i + 1}</span><b>${t}</b><p>${p}</p></li>`).join('')}</ol></div>
     <div class="form-panel" id="prop-body">${proposalForm()}</div>
   </div></section>
   <section class="sec" aria-labelledby="faq-h" style="padding-top:0"><div class="wrap split"><h2 class="t-1" id="faq-h">Questions owners ask</h2><div class="faq">${faq.map(([q, a]) => `<details><summary>${q}<span class="pm" aria-hidden="true">${ico.plus}</span></summary><div class="ans">${a}</div></details>`).join('')}</div></div></section>
-  <section class="cta-band"><div class="wrap"><h2 class="t-1" style="max-width:16ch">Have a vacancy coming up?</h2><div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn" type="button" data-act="scrollto" data-target="proposal">Request a leasing proposal</button><a class="btn ghost" href="#contact">Contact Chaire</a></div></div></section>`;
+  <section class="cta-band"><div class="wrap"><h2 class="t-1" style="max-width:16ch">Have a vacancy coming up?</h2><div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn" type="button" data-act="scrollto" data-target="proposal">Request a leasing proposal</button><a class="btn ghost" href="#contact">Contact Chai Real Estate</a></div></div></section>`;
 }
 
 /* ---------- about / contact ---------- */
 function viewAbout() {
   return `<section class="wrap page-head" style="padding-bottom:clamp(64px,8vw,120px)"><div class="about-grid">
-    <div><div class="portrait">Portrait of Chayim<br>to be supplied</div></div>
+    <div><div class="portrait">Portrait of Chayim Schaider<br>to be supplied</div></div>
     <div><h1 class="t-1" id="main-h" tabindex="-1">An independent New York real estate studio</h1>
-      <div class="prose lede" style="margin-top:24px"><p>Chaire NYC helps renters find apartments and helps owners lease them. It was founded by Chayim.</p><p class="note"><b>Review note:</b> founder biography, background and company history to be supplied by Chayim.</p></div>
+      <div class="prose lede" style="margin-top:24px"><p>Chai Real Estate helps renters find apartments in New York and helps owners lease them. It was founded by Chayim Schaider.</p><p>The name comes from <i>chai</i> (<bdi lang="he">חַי</bdi>), the Hebrew word for “living” or “alive,” written with the letters chet and yod. RE stands for real estate.</p><p class="note"><b>Review note:</b> founder biography, background and company history to be supplied by Chayim.</p></div>
       <ul class="principles">${[['Fees in writing', 'Every listing shows what a renter pays, before the first conversation.'], ['Photos that match', 'Listings show the apartment as it is, so viewings hold no surprises.'], ['Updates every week', 'Owners hear what happened, what renters said and what comes next.']].map(([t, p]) => `<li><h3>${t}</h3><p>${p}</p></li>`).join('')}</ul>
-      <p class="note" style="margin-top:24px"><b>Review note:</b> these principles are a suggested positioning for Chaire to confirm.</p>
+      <p class="note" style="margin-top:24px"><b>Review note:</b> these principles are a suggested positioning for Chai Real Estate to confirm.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:40px"><a class="btn" href="#apartments">Explore apartments</a><a class="btn ghost" href="#owners">Lease your property</a></div>
     </div></div></section>`;
 }
 function contactForm(done) {
-  if (done) return `<div class="success" role="status" tabindex="-1" id="ct-ok"><span class="mark">${ico.check}</span><h3>Message received</h3><p>Thanks, ${esc(done.name.split(' ')[0])}. Chaire will reply by email.</p><p class="small">This is a prototype, so no email was sent. Your message is in the admin demo inbox.</p><button class="btn ghost sm" type="button" data-act="ct-again">Send another message</button></div>`;
+  if (done) return `<div class="success" role="status" tabindex="-1" id="ct-ok"><span class="mark">${ico.check}</span><h3>Message received</h3><p>Thanks, ${esc(done.name.split(' ')[0])}. Chai Real Estate will reply by email.</p><p class="small">This is a prototype, so no email was sent. Your message is in the admin demo inbox.</p><button class="btn ghost sm" type="button" data-act="ct-again">Send another message</button></div>`;
   return `<form class="form" id="f-contact" novalidate>
     <div class="field"><span class="lbl" id="c-who-l">I am</span><div class="radios" role="radiogroup" aria-labelledby="c-who-l">${[['renter', 'Looking to rent'], ['owner', 'An owner or manager'], ['other', 'Something else']].map(([v, t], i) => `<label><input type="radio" name="who" value="${v}" ${i === 0 ? 'checked' : ''}> ${t}</label>`).join('')}</div></div>
     <div class="two">${field({ id: 'c-name', label: 'Full name', attrs: 'autocomplete="name"' })}${field({ id: 'c-email', label: 'Email', type: 'email', attrs: 'autocomplete="email"' })}</div>
@@ -1863,7 +1868,7 @@ function contactForm(done) {
 function viewContact() {
   const st = S.settings, v = (x, l) => x ? esc(x) : `<span class="ph-txt">${l} to be supplied</span>`;
   return `<section class="wrap page-head" style="padding-bottom:clamp(64px,8vw,120px)"><div class="about-grid">
-    <div><h1 class="t-1" id="main-h" tabindex="-1">Contact Chaire</h1><p class="lede" style="margin-top:18px">Questions about an apartment, a building you own or anything else.</p>
+    <div><h1 class="t-1" id="main-h" tabindex="-1">Contact Chai Real Estate</h1><p class="lede" style="margin-top:18px">Questions about an apartment, a building you own or anything else.</p>
       <dl class="contact-list"><div><dt>Phone</dt><dd>${v(st.phone, 'Phone')}</dd></div><div><dt>Email</dt><dd>${v(st.email, 'Email')}</dd></div><div><dt>Office</dt><dd>${v(st.office, 'Address')}</dd></div><div><dt>Hours</dt><dd>${v(st.hours, 'Hours')}</dd></div></dl></div>
     <div class="form-panel" id="ct-body">${contactForm()}</div>
   </div></section>`;
@@ -2025,9 +2030,9 @@ function adminShell(view, active, crumb) {
   const nNew = S.inquiries.filter(q => q.status === 'New').length;
   return `<a class="skip" href="#adm-main" data-act="askip">Skip to content</a><div class="adm">
   <aside class="adm-side" id="adm-side" aria-label="Admin navigation">
-    <div class="adm-brand"><a class="wm" href="#admin" aria-label="Chaire admin overview"><b>CHAIRE</b><i>ADMIN</i></a></div>
+    <div class="adm-brand"><a class="wm" href="#admin" aria-label="Chai Real Estate admin overview"><b>CHAI</b><span class="re">RE</span><span class="nyc">ADMIN</span></a></div>
     <nav class="adm-nav">${ANAV.map(([h, t, ic]) => `<a href="#${h}"${active === h ? ' aria-current="page"' : ''}>${ic}<span>${t}</span>${h === 'admin-inquiries' && nNew ? `<span class="badge" aria-label="${nNew} new">${nNew}</span>` : ''}</a>`).join('')}</nav>
-    <div class="adm-side-foot"><div class="who"><span class="av" aria-hidden="true">C</span><div><b>Chayim</b><span>Founder</span></div></div><a class="ab block" href="#home">View public site</a></div>
+    <div class="adm-side-foot"><div class="who"><span class="av" aria-hidden="true">CS</span><div><b>Chayim Schaider</b><span>Founder</span></div></div><a class="ab block" href="#home">View public site</a></div>
   </aside><div class="adm-scrim" data-act="adm-nav"></div>
   <div class="adm-main">
     <header class="adm-top"><button class="ab icon adm-menu" type="button" data-act="adm-nav" aria-label="Open navigation" aria-expanded="false" aria-controls="adm-side">${ico.menu}</button><span class="adm-crumb">${crumb}</span><span class="sp"></span><span class="adm-demo">Demo data</span><a class="ab vs" href="#home">View site</a></header>
@@ -2172,7 +2177,7 @@ function editView() {
       <div class="field"><label for="d-leaseTerm">Lease term</label><select class="sel" id="d-leaseTerm" data-in="d" data-k="leaseTerm">${opts(['12 months', '18 months', '24 months', 'Flexible'].map(x => [x, x]), d.leaseTerm)}</select></div>
       <div class="field"><label for="d-pets">Pet policy</label><select class="sel" id="d-pets" data-in="d" data-k="pets">${opts(['Case by case', 'Cats allowed', 'Cats and dogs considered', 'No pets'].map(x => [x, x]), d.pets)}</select></div></div>`)}
     ${sec('s-fees', 'Fees and disclosures', 'Every fee a renter pays must appear on the listing (NYC FARE Act).', `<div class="g3">
-      <div class="field"><label for="d-fees-brokerTenant">Broker fee charged to renter</label><div class="prefix"><span>$</span><input class="inp" id="d-fees-brokerTenant" type="number" min="0" value="${esc(d.fees.brokerTenant)}" data-in="d" data-k="fees.brokerTenant" aria-describedby="d-fees-brokerTenant-hint d-fees-brokerTenant-err"></div><p class="hint" id="d-fees-brokerTenant-hint">Must be $0 when Chaire lists for the owner.</p><p class="err" id="d-fees-brokerTenant-err"></p></div>
+      <div class="field"><label for="d-fees-brokerTenant">Broker fee charged to renter</label><div class="prefix"><span>$</span><input class="inp" id="d-fees-brokerTenant" type="number" min="0" value="${esc(d.fees.brokerTenant)}" data-in="d" data-k="fees.brokerTenant" aria-describedby="d-fees-brokerTenant-hint d-fees-brokerTenant-err"></div><p class="hint" id="d-fees-brokerTenant-hint">Must be $0 when Chai Real Estate lists for the owner.</p><p class="err" id="d-fees-brokerTenant-err"></p></div>
       <div class="field"><label for="d-fees-application">Application fee</label><div class="prefix"><span>$</span><input class="inp" id="d-fees-application" type="number" min="0" max="20" value="${esc(d.fees.application)}" data-in="d" data-k="fees.application" aria-describedby="d-fees-application-hint d-fees-application-err"></div><p class="hint" id="d-fees-application-hint">New York caps this at $20.</p><p class="err" id="d-fees-application-err"></p></div>
       <div class="field"><label for="d-fees-deposit">${deplabel}</label><div class="prefix"><span>$</span><input class="inp" id="d-fees-deposit" type="number" min="0" value="${esc(d.fees.deposit)}" data-in="d" data-k="fees.deposit" aria-describedby="d-fees-deposit-hint d-fees-deposit-err"></div><p class="hint" id="d-fees-deposit-hint">Up to one month's rent. <button class="link" type="button" data-act="dep-rent">Use one month's rent</button></p><p class="err" id="d-fees-deposit-err"></p></div></div>
       ${dfield('fees.other', 'Other fees', { opt: true, ph: 'e.g. Move-in fee of $150 charged by the building', hint: 'Anything else the renter pays to the owner or building.' })}
@@ -2290,7 +2295,7 @@ function iqDetail(q) {
     ? `<dt>Location</dt><dd>${esc(q.location || 'Not specified')}</dd><dt>Units</dt><dd>${esc(q.units || 'Not specified')}</dd><dt>Timeframe</dt><dd>${esc(q.timeframe || 'Not specified')}</dd>`
     : `<dt>Listing</dt><dd>${l ? `<span>${esc(l.title)}</span>${pill(l.status)}<a class="ab sm" href="#admin-edit-${l.id}">Edit listing</a>${l.status === 'published' ? `<a class="ab sm" href="#apartment-${l.id}">View</a>` : ''}` : '<span class="muted">General question</span>'}</dd><dt>Requested viewing</dt><dd>${q.tour ? `${fdate(q.tour, true)}${q.time ? `, ${esc(q.time.toLowerCase())}` : ''}` : '<span class="muted">No date given</span>'}</dd>`}</dl></div>
   <div><h3>Message</h3><p class="msg">${q.message ? esc(q.message) : '<span class="muted">No message.</span>'}</p></div>
-  <div><h3>Internal notes</h3>${q.notes.length ? `<ul class="notes">${q.notes.map(n => `<li><time datetime="${n.t}">${ftime(n.t)}</time>${esc(n.text)}</li>`).join('')}</ul>` : '<p class="small muted" style="margin-bottom:10px">No notes yet. Notes are only visible to the Chaire team.</p>'}
+  <div><h3>Internal notes</h3>${q.notes.length ? `<ul class="notes">${q.notes.map(n => `<li><time datetime="${n.t}">${ftime(n.t)}</time>${esc(n.text)}</li>`).join('')}</ul>` : '<p class="small muted" style="margin-bottom:10px">No notes yet. Notes are only visible to the Chai Real Estate team.</p>'}
     <form id="f-note" class="form" data-id="${q.id}" novalidate>${field({ id: 'n-text', label: 'Add a note', type: 'textarea', rows: 2, ph: 'e.g. Called, left voicemail. Try again Friday.' })}<div><button class="ab pri" type="submit">Add note</button></div></form></div>`;
 }
 
@@ -2317,7 +2322,7 @@ function settingsView() {
     <div class="g2">${f('name', 'Business name')}${f('phone', 'Public phone', { type: 'tel', ph: 'Not set' })}</div>
     <div class="g2">${f('email', 'Public email', { type: 'email', ph: 'Not set' })}${f('hours', 'Office hours', { ph: 'e.g. Mon to Fri, 9 to 6' })}</div>
     ${f('office', 'Office address', { ph: 'Not set' })}
-    ${f('license', 'License statement', { ph: 'e.g. Licensed Real Estate Broker, New York State', hint: 'Enter the exact wording and license details supplied by Chaire.' })}
+    ${f('license', 'License statement', { ph: 'e.g. Licensed Real Estate Broker, New York State', hint: 'Enter the exact wording and license details supplied by Chai Real Estate.' })}
     ${f('notify', 'Send new inquiries to', { type: 'email', opt: true, ph: 'Email for notifications (not active in the demo)' })}
     <div><button class="ab pri" type="submit">Save settings</button></div></div></form>
   <section class="panel fsec dz"><div class="panel-h"><div><h2>Demo data</h2><p>Restore the sample listings, inquiries and content.</p></div><button class="ab danger" type="button" data-act="reset-ask">Reset demo data</button></div></section>`;
