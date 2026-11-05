@@ -37,9 +37,7 @@ button{cursor:pointer}
 .skip:focus{top:12px}
 .tab{font-variant-numeric:tabular-nums}
 .muted{color:var(--ink-2)}
-.ph{background:var(--stone-2);width:100%;height:100%;object-fit:cover;opacity:.001;transition:opacity .5s ease}
-.ph.in,.ph[src^="blob:"],.ph[src^="data:image/jpeg"],.ph[src^="data:image/png"]{opacity:1}
-img.ph:not([data-g]){opacity:1}
+.ph{background:var(--stone-2);width:100%;height:100%;object-fit:cover;opacity:1}
 
 /* type scale */
 .t-hero{font-size:clamp(44px,5.4vw,84px);line-height:.98;letter-spacing:-.028em;font-weight:350;font-variation-settings:"opsz" 72}
@@ -832,497 +830,139 @@ dialog::backdrop{background:rgba(26,30,29,.72)}
 <dialog id="dlg" aria-label="Dialog"></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
-/* Chai Real Estate image engine.
-   Artifacts cannot load remote photos, so every photography slot is drawn locally as an
-   illustrative architectural rendering (facades, rooms, lofts, rooftops). Swap for real photos later. */
+/* Curated Unsplash stock photography, served locally with the site.
+   Photographer credits and original sources: /photo-credits.html and /images/credits.json. */
 const IMG = (() => {
-  const TAU = Math.PI * 2;
-  const rng = seed => { let a = (Math.imul((seed | 0) + 1, 2654435761) ^ 0x9e3779b9) >>> 0; return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; };
-  const hx = h => { h = h.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); };
-  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
-  const lit = (c, k) => k >= 0 ? mix(c, [255, 255, 255], k) : mix(c, [0, 0, 0], -k);
-  const css = (c, a = 1) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
-  const pick = (r, a) => a[Math.floor(r() * a.length)];
-  const btw = (r, a, b) => a + r() * (b - a);
-  function poly(ctx, pts, fill) { ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); if (fill) { ctx.fillStyle = fill; ctx.fill(); } }
-  function lin(ctx, x0, y0, x1, y1, stops) { const g = ctx.createLinearGradient(x0, y0, x1, y1); stops.forEach(([o, c]) => g.addColorStop(o, c)); return g; }
-  function rad(ctx, x, y, r0, r1, stops) { const g = ctx.createRadialGradient(x, y, r0, x, y, r1); stops.forEach(([o, c]) => g.addColorStop(o, c)); return g; }
-
-  let _noise;
-  function noise() {
-    if (_noise) return _noise;
-    _noise = document.createElement('canvas'); _noise.width = _noise.height = 256;
-    const g = _noise.getContext('2d'), d = g.createImageData(256, 256);
-    for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255 | 0; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
-    g.putImageData(d, 0, 0); return _noise;
-  }
-  function finish(ctx, W, H, o = {}) {
-    ctx.save();
-    ctx.globalCompositeOperation = 'soft-light';
-    ctx.fillStyle = lin(ctx, 0, 0, W, H, [[0, 'rgba(255,214,168,.55)'], [1, 'rgba(36,28,22,.4)']]);
-    ctx.fillRect(0, 0, W, H);
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = rad(ctx, W * .5, H * .45, Math.min(W, H) * .32, Math.hypot(W, H) * .62, [[0, 'rgba(0,0,0,0)'], [1, `rgba(24,16,10,${o.vig ?? .3})`]]);
-    ctx.fillRect(0, 0, W, H);
-    ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = o.grain ?? .1;
-    ctx.fillStyle = ctx.createPattern(noise(), 'repeat'); ctx.fillRect(0, 0, W, H);
-    ctx.restore();
-  }
-  function sky(ctx, x, y, w, h, mood) {
-    const s = mood === 'dusk' ? [[0, '#6E7A8F'], [.55, '#C2A391'], [1, '#EBC69C']]
-      : mood === 'gold' ? [[0, '#A3B3BC'], [1, '#EFDCBE']] : [[0, '#A9BAC4'], [1, '#E7E4DB']];
-    ctx.fillStyle = lin(ctx, 0, y, 0, y + h, s); ctx.fillRect(x, y, w, h);
-  }
-  function bricks(ctx, x0, y0, w, h, base, mortar, r, bh) {
-    ctx.fillStyle = css(mortar); ctx.fillRect(x0, y0, w, h);
-    const bw = bh * 2.75, gap = Math.max(1, bh * .15);
-    let row = 0;
-    for (let y = y0; y < y0 + h; y += bh, row++) {
-      const off = (row % 2) * bw / 2, tone = (r() - .5) * .05;
-      for (let x = x0 - off; x < x0 + w; x += bw) {
-        let k = tone + (r() - .5) * .15; if (r() < .05) k -= .14; if (r() < .03) k += .12;
-        ctx.fillStyle = css(lit(base, k)); ctx.fillRect(x + gap / 2, y + gap / 2, bw - gap, bh - gap);
-      }
+  const photos = {
+    "nyc-fire-escapes": {
+        "src": "images/nyc-fire-escapes.webp",
+        "thumbnail": "images/nyc-fire-escapes-640.webp",
+        "width": 1800,
+        "height": 1202,
+        "thumbnailWidth": 640,
+        "alt": "New York apartment facade with exterior fire escapes",
+        "photographer": "Aidan Murphy",
+        "source": "https://unsplash.com/photos/oQpGg_uRPXQ"
+    },
+    "nyc-sunny-street": {
+        "src": "images/nyc-sunny-street.webp",
+        "thumbnail": "images/nyc-sunny-street-640.webp",
+        "width": 1013,
+        "height": 1800,
+        "thumbnailWidth": 640,
+        "alt": "Apartment buildings and fire escapes on a sunny New York street",
+        "photographer": "Julian Ostarek",
+        "source": "https://unsplash.com/photos/A1gUvBmyRIY"
+    },
+    "nyc-brownstones": {
+        "src": "images/nyc-brownstones.webp",
+        "thumbnail": "images/nyc-brownstones-640.webp",
+        "width": 1800,
+        "height": 1185,
+        "thumbnailWidth": 640,
+        "alt": "Historic brownstone buildings in the West Village, New York",
+        "photographer": "Clay LeConey",
+        "source": "https://unsplash.com/photos/ji6L96WF67s"
+    },
+    "brooklyn-brick": {
+        "src": "images/brooklyn-brick.webp",
+        "thumbnail": "images/brooklyn-brick-640.webp",
+        "width": 1348,
+        "height": 1800,
+        "thumbnailWidth": 640,
+        "alt": "Brick apartment building with exterior fire escapes in New York",
+        "photographer": "Jon Tyson",
+        "source": "https://unsplash.com/photos/7Iflw8kaZIQ"
+    },
+    "living-room": {
+        "src": "images/living-room.webp",
+        "thumbnail": "images/living-room-640.webp",
+        "width": 1800,
+        "height": 1200,
+        "thumbnailWidth": 640,
+        "alt": "Sunlit living and dining room with a sofa and wood furniture",
+        "photographer": "deborah cortelazzi",
+        "source": "https://unsplash.com/photos/gREquCUXQLI"
+    },
+    "apartment-interior": {
+        "src": "images/apartment-interior.webp",
+        "thumbnail": "images/apartment-interior-640.webp",
+        "width": 1800,
+        "height": 1200,
+        "thumbnailWidth": 640,
+        "alt": "Apartment interior with a kitchen, living area and warm wood finishes",
+        "photographer": "Irena Oze",
+        "source": "https://unsplash.com/photos/QLxwC1Z-ceM"
+    },
+    "kitchen-living": {
+        "src": "images/kitchen-living.webp",
+        "thumbnail": "images/kitchen-living-640.webp",
+        "width": 1800,
+        "height": 1350,
+        "thumbnailWidth": 640,
+        "alt": "Open kitchen and living area in a one-bedroom apartment",
+        "photographer": "Lisa Anna",
+        "source": "https://unsplash.com/photos/OqZaRVv3_zE"
+    },
+    "bedroom-grey": {
+        "src": "images/bedroom-grey.webp",
+        "thumbnail": "images/bedroom-grey-640.webp",
+        "width": 1800,
+        "height": 1200,
+        "thumbnailWidth": 640,
+        "alt": "Bedroom with grey walls, a large bed and a patterned rug",
+        "photographer": "Francesca Tosolini",
+        "source": "https://unsplash.com/photos/hCU4fimRW-c"
+    },
+    "bedroom-four-poster": {
+        "src": "images/bedroom-four-poster.webp",
+        "thumbnail": "images/bedroom-four-poster-640.webp",
+        "width": 1337,
+        "height": 1800,
+        "thumbnailWidth": 640,
+        "alt": "Bright bedroom with a white and black four-poster bed",
+        "photographer": "Francesca Tosolini",
+        "source": "https://unsplash.com/photos/y2in-QgWrdU"
+    },
+    "nyc-skyline": {
+        "src": "images/nyc-skyline.webp",
+        "thumbnail": "images/nyc-skyline-640.webp",
+        "width": 1800,
+        "height": 1200,
+        "thumbnailWidth": 640,
+        "alt": "New York City skyline seen above nearby rooftops",
+        "photographer": "Zoshua Colah",
+        "source": "https://unsplash.com/photos/k-rwQAZS0Fg"
     }
-  }
-  function stucco(ctx, x0, y0, w, h, base, r) {
-    ctx.fillStyle = css(base); ctx.fillRect(x0, y0, w, h);
-    const n = w * h / 260;
-    for (let i = 0; i < n; i++) { ctx.fillStyle = css(lit(base, (r() - .5) * .09), .5); const s = 1 + r() * 3; ctx.fillRect(x0 + r() * w, y0 + r() * h, s, s); }
-  }
-  function skyline(ctx, x0, base, w, hmax, r, color, lights) {
-    let x = x0 - 8;
-    while (x < x0 + w) {
-      const bw = w * btw(r, .02, .065), bh = hmax * (r() < .12 ? btw(r, .7, 1) : btw(r, .12, .6));
-      ctx.fillStyle = color; ctx.fillRect(x, base - bh, bw + 1, bh + 2);
-      if (r() < .25) ctx.fillRect(x + bw * .2, base - bh * 1.08, bw * .6, bh * .08 + 1);
-      if (r() < .07) { ctx.beginPath(); ctx.moveTo(x + bw / 2 - 1.5, base - bh); ctx.lineTo(x + bw / 2, base - bh - hmax * .16); ctx.lineTo(x + bw / 2 + 1.5, base - bh); ctx.fill(); }
-      if (lights) {
-        const n = bh * bw / 160;
-        for (let i = 0; i < n; i++) if (r() < .3) { ctx.fillStyle = `rgba(255,${200 + r() * 40 | 0},140,${btw(r, .25, .75)})`; ctx.fillRect(x + 2 + r() * (bw - 4), base - bh + 4 + r() * (bh - 6), 1.6, 1.6); }
-      }
-      x += bw + (r() < .3 ? w * btw(r, 0, .012) : 0);
-    }
-  }
-
-  /* ---------- Facade (street elevation) ---------- */
-  const MATS = {
-    brick: { base: '#8B4733', mortar: '#B39C88', brick: 1, trim: '#D3C7B2' },
-    red: { base: '#9A5038', mortar: '#C2AE9A', brick: 1, trim: '#E2DACB' },
-    tan: { base: '#BC8B59', mortar: '#DCCBAE', brick: 1, trim: '#E8DFCF' },
-    brown: { base: '#6F4A3A', trim: '#86604E' },
-    cream: { base: '#E1D7C5', trim: '#F2EDE3' },
-    sage: { base: '#97A08F', trim: '#E9E5DB' },
-    slate: { base: '#5A646C', trim: '#E7E2D8' },
-    lime: { base: '#CDBFA5', trim: '#DDD2BE', blocks: 1 },
+};
+  const groups = {
+    'room-living': ['living-room', 'apartment-interior', 'kitchen-living'],
+    'room-bed': ['bedroom-grey', 'bedroom-four-poster'],
+    kitchen: ['kitchen-living', 'apartment-interior'],
+    loft: ['living-room', 'apartment-interior'],
+    roof: ['nyc-skyline'],
+    facade: ['nyc-fire-escapes', 'nyc-sunny-street', 'nyc-brownstones', 'brooklyn-brick'],
   };
-  function cornice(ctx, W, y, ch, cols, bay, r) {
-    const cc = hx(pick(r, ['#3C3A35', '#4B4740', '#D8CFBF', '#5A3E33']));
-    ctx.fillStyle = lin(ctx, 0, y + ch, 0, y + ch * 2.4, [[0, 'rgba(22,15,10,.5)'], [1, 'rgba(22,15,10,0)']]); ctx.fillRect(0, y + ch, W, ch * 1.4);
-    ctx.fillStyle = css(lit(cc, .1)); ctx.fillRect(0, y, W, ch * .32);
-    ctx.fillStyle = css(lit(cc, -.28)); ctx.fillRect(0, y + ch * .32, W, ch * .1);
-    ctx.fillStyle = css(cc); ctx.fillRect(0, y + ch * .42, W, ch * .58);
-    ctx.fillStyle = css(lit(cc, .14)); const dw = ch * .13; for (let x = dw * .5; x < W; x += dw * 2) ctx.fillRect(x, y + ch * .46, dw, ch * .16);
-    for (let k = 0; k <= cols * 2; k++) {
-      const bx = k * bay / 2 - ch * .14;
-      ctx.fillStyle = css(lit(cc, .06)); ctx.fillRect(bx, y + ch * .3, ch * .28, ch * .95);
-      ctx.fillStyle = 'rgba(15,10,8,.35)'; ctx.fillRect(bx + ch * .28, y + ch * .4, ch * .12, ch * .88);
-    }
-    ctx.fillStyle = css(lit(cc, -.32)); ctx.fillRect(0, y + ch - 2, W, 3);
+  const facades = {
+    brick: 'nyc-fire-escapes', red: 'brooklyn-brick', cream: 'nyc-sunny-street',
+    brown: 'nyc-brownstones', tan: 'nyc-sunny-street', lime: 'brooklyn-brick',
+    sage: 'nyc-brownstones', slate: 'nyc-fire-escapes',
+  };
+  function photo(spec) {
+    if (spec.src) return { src: spec.src, alt: spec.name ? `Uploaded photo: ${spec.name}` : 'Uploaded property photo' };
+    const scene = spec.g || 'room-living';
+    if (scene.startsWith('facade-') && facades[scene.split('-')[1]]) return photos[facades[scene.split('-')[1]]];
+    const kind = scene.startsWith('room-bed') ? 'room-bed' : scene.startsWith('room') ? 'room-living' : scene.split('-')[0];
+    const options = groups[kind] || groups['room-living'];
+    return photos[options[Math.abs(Math.trunc(Number(spec.s) || 0)) % options.length]];
   }
-  function facWin(ctx, x, y, w, h, r, o) {
-    const rv = w * .085, lx = x - w * .12, lw = w * 1.24, lh = h * .085;
-    ctx.fillStyle = 'rgba(20,14,10,.22)'; ctx.fillRect(lx + w * .05, y - lh * .1, lw, lh * .5);
-    ctx.fillStyle = css(o.trim); ctx.fillRect(lx, y - lh, lw, lh);
-    ctx.fillStyle = css(lit(o.trim, -.14)); ctx.fillRect(lx, y - lh * .2, lw, lh * .2);
-    if (o.key) { ctx.fillStyle = css(lit(o.trim, .06)); ctx.beginPath(); ctx.moveTo(x + w * .42, y - lh * 1.15); ctx.lineTo(x + w * .58, y - lh * 1.15); ctx.lineTo(x + w * .55, y); ctx.lineTo(x + w * .45, y); ctx.fill(); }
-    const sy = y + h, sh = h * .04;
-    ctx.fillStyle = 'rgba(20,14,10,.26)'; ctx.fillRect(lx + w * .11, sy + sh, lw - w * .12, sh * 1.5);
-    ctx.fillStyle = css(o.trim); ctx.fillRect(lx + w * .06, sy, lw - w * .12, sh);
-    ctx.fillStyle = '#1D1A18'; ctx.fillRect(x, y, w, h);
-    poly(ctx, [[x, y], [x + w, y], [x + w - rv, y + rv], [x + rv, y + rv]], css(lit(o.wall, -.55)));
-    poly(ctx, [[x, y], [x + rv, y + rv], [x + rv, y + h], [x, y + h]], css(lit(o.wall, -.42)));
-    poly(ctx, [[x + w, y], [x + w - rv, y + rv], [x + w - rv, y + h], [x + w, y + h]], css(lit(o.wall, -.06)));
-    const fx = x + rv, fy = y + rv, fw = w - rv * 2, fhh = h - rv, t = fw * .085, ph = (fhh - t * 3) / 2;
-    ctx.fillStyle = css(o.frame); ctx.fillRect(fx, fy, fw, fhh);
-    for (let k = 0; k < 2; k++) {
-      const px = fx + t, py = fy + t + k * (ph + t), pw = fw - t * 2;
-      const warm = r() < o.lit;
-      ctx.fillStyle = warm ? lin(ctx, 0, py, 0, py + ph, [[0, '#F1C788'], [1, '#B97C45']])
-        : lin(ctx, px, py, px + pw * .7, py + ph, [[0, css(o.skyc)], [.45, css(lit(o.skyc, -.5))], [1, '#26282A']]);
-      ctx.fillRect(px, py, pw, ph);
-      if (k === 0 && r() < .55) { const bh = ph * btw(r, .2, .95); ctx.fillStyle = css(o.blind); ctx.fillRect(px, py, pw, bh); ctx.fillStyle = 'rgba(0,0,0,.14)'; ctx.fillRect(px, py + bh - 2, pw, 2); }
-      else if (r() < .22) { ctx.fillStyle = 'rgba(240,232,220,.5)'; ctx.fillRect(px, py, pw * .26, ph); ctx.fillRect(px + pw * .74, py, pw * .26, ph); }
-      if (o.muntin) { ctx.fillStyle = css(o.frame); ctx.fillRect(px + pw / 2 - t * .25, py, t * .5, ph); }
-      ctx.fillStyle = lin(ctx, px, py, px + pw, py + ph, [[0, 'rgba(255,255,255,0)'], [.42, 'rgba(255,255,255,.11)'], [.56, 'rgba(255,255,255,0)']]);
-      ctx.fillRect(px, py, pw, ph);
-    }
-    ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.fillRect(fx, fy + t + ph + t, fw, t * .45);
-  }
-  function fireEscape(ctx, x0, x1, rows, wh, W, H) {
-    const lw = Math.max(1.3, W / 850);
-    const pass = (color, ox, oy) => {
-      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw;
-      rows.forEach((y, i) => {
-        const py = y + wh * 1.08, rh = wh * .36;
-        ctx.fillRect(x0 + ox, py + oy, x1 - x0, lw * 3);
-        ctx.fillRect(x0 + ox, py - rh + oy, x1 - x0, lw * 1.7);
-        ctx.fillRect(x0 + ox, py - rh * .5 + oy, x1 - x0, lw);
-        for (let x = x0; x <= x1; x += wh * .045) ctx.fillRect(x + ox, py - rh + oy, lw * .8, rh);
-        ctx.fillRect(x0 + ox, py - rh + oy, lw * 2.2, rh + lw * 3); ctx.fillRect(x1 + ox - lw * 2.2, py - rh + oy, lw * 2.2, rh + lw * 3);
-        ctx.beginPath(); ctx.moveTo(x0 + ox, py + oy + lw * 3); ctx.lineTo(x0 + ox + wh * .14, py + oy + lw * 3 + wh * .14);
-        ctx.moveTo(x1 + ox, py + oy + lw * 3); ctx.lineTo(x1 + ox - wh * .14, py + oy + lw * 3 + wh * .14); ctx.stroke();
-        const ny = rows[i + 1];
-        if (ny !== undefined) {
-          const npy = ny + wh * 1.08, flip = i % 2, span = x1 - x0;
-          const ax = flip ? x1 - span * .08 : x0 + span * .08, bx = flip ? x1 - span * .5 : x0 + span * .5;
-          ctx.beginPath(); ctx.moveTo(ax + ox, py + oy); ctx.lineTo(bx + ox, npy + oy);
-          ctx.moveTo(ax + ox, py + oy - rh); ctx.lineTo(bx + ox, npy + oy - rh); ctx.stroke();
-          for (let k = 1; k < 14; k++) { const tx = ax + (bx - ax) * k / 14, ty = py + (npy - py) * k / 14; ctx.fillRect(tx + ox - wh * .025, ty + oy - lw, wh * .05, lw * 1.6); }
-        }
-      });
-    };
-    pass('rgba(16,10,8,.3)', W * .014, H * .03);
-    pass('#1C1C1A', 0, 0);
-  }
-  function castShadow(ctx, W, H, r) {
-    const p = btw(r, .15, .45), q = btw(r, .4, .8), step = btw(r, .08, .16);
-    for (let i = 0; i < 9; i++) {
-      const o = (i - 4) * Math.max(W, H) * .005;
-      poly(ctx, [[-20, H * p + o], [W * q * .5 + o, H * (p + step) + o], [W * q + o, H + 20], [-20, H + 20]], 'rgba(30,20,15,.04)');
-    }
-  }
-  function facade(ctx, W, H, r, o) {
-    const mk = MATS[o.mat] ? o.mat : pick(r, Object.keys(MATS)), m = MATS[mk];
-    const base = hx(m.base), trim = hx(m.trim), unit = Math.min(W, H);
-    const mood = o.mood || pick(r, ['day', 'gold', 'gold', 'dusk']);
-    const top = o.top ?? r() < .6;
-    const skyH = top ? H * btw(r, .07, .12) : 0;
-    if (top) sky(ctx, 0, 0, W, skyH + 4, mood);
-    if (m.brick) bricks(ctx, 0, skyH, W, H - skyH, base, hx(m.mortar), r, Math.max(4, unit / 105));
-    else {
-      stucco(ctx, 0, skyH, W, H - skyH, base, r);
-      if (m.blocks) { ctx.strokeStyle = css(lit(base, -.14), .55); ctx.lineWidth = 1; const bh = unit / 18; for (let y = skyH + bh; y < H; y += bh) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); } }
-    }
-    const cols = o.cols || (W >= H ? 3 + (r() < .5 ? 1 : 0) : 2 + (r() < .45 ? 1 : 0));
-    const bay = W / cols, ww = bay * btw(r, .4, .47), wh = ww * btw(r, 1.85, 2.15), fh = wh * btw(r, 1.45, 1.6);
-    let y0 = skyH;
-    if (top) { const ch = unit * btw(r, .06, .085); cornice(ctx, W, skyH, ch, cols, bay, r); y0 = skyH + ch; }
-    const rows = []; for (let y = y0 + fh * btw(r, .3, .45); y < H + 10; y += fh) rows.push(y);
-    const wo = {
-      trim, wall: base, skyc: hx(mood === 'dusk' ? '#B4A8A6' : '#B8C6CC'),
-      frame: hx(pick(r, ['#ECE6DC', '#ECE6DC', '#25231F', '#2D3A32', '#3B414A'])),
-      blind: hx(pick(r, ['#EDE5D6', '#E8DDC8', '#D9D3C6'])), muntin: r() < .4, key: r() < .35, lit: mood === 'dusk' ? .38 : .06,
-    };
-    rows.forEach(y => { for (let j = 0; j < cols; j++) facWin(ctx, j * bay + (bay - ww) / 2, y, ww, wh, r, wo); });
-    const fe = o.fe ?? (m.brick && r() < .75);
-    if (fe && cols >= 2) { const j0 = cols >= 3 ? Math.floor(r() * (cols - 1)) : 0; fireEscape(ctx, j0 * bay + bay * .1, (j0 + 2) * bay - bay * .1, rows, wh, W, H); }
-    if (mood !== 'day' || r() < .5) castShadow(ctx, W, H, r);
-    ctx.fillStyle = lin(ctx, 0, 0, W, H, [[0, 'rgba(255,230,190,.10)'], [.6, 'rgba(255,230,190,0)']]); ctx.fillRect(0, 0, W, H);
-    finish(ctx, W, H);
-  }
-
-  /* ---------- Rooms (one-point perspective) ---------- */
-  function room(ctx, W, H, r, o) {
-    const kind = o.kind || 'living';
-    const vx = W * btw(r, .44, .56), vy = H * btw(r, .44, .49), s = btw(r, .62, .67);
-    const RH = 2.9, zb = 5.6, z0 = zb * s;                        // room height (m), back wall distance, front plane
-    const D = m => z0 / (zb - m);                                  // depth factor m metres in front of the back wall
-    const PX = m => H * m / RH;                                    // metres to px at the front plane
-    const V = (X, h, d) => [vx + (X - vx) * d, vy + (H - vy) * d - PX(h) * d];
-    const BW = (X0, m) => X0;                                      // world X is measured in front-plane px
-    const bx0 = vx - vx * s, bx1 = vx + (W - vx) * s, by0 = vy - vy * s, by1 = vy + (H - vy) * s;
-    const wall = hx(o.wall || pick(r, ['#ECE6DB', '#E9E2D5', '#E3E1D8', '#EFEAE2', '#DDD6C8']));
-    const mood = o.mood || pick(r, ['day', 'gold', 'gold']);
-    // shell
-    poly(ctx, [[0, 0], [W, 0], [bx1, by0], [bx0, by0]], css(lit(wall, .06)));
-    poly(ctx, [[0, 0], [bx0, by0], [bx0, by1], [0, H]], css(lit(wall, -.04)));
-    poly(ctx, [[W, 0], [bx1, by0], [bx1, by1], [W, H]], css(lit(wall, -.15)));
-    ctx.fillStyle = lin(ctx, bx0, 0, bx1, 0, [[0, css(lit(wall, -.01))], [1, css(lit(wall, -.08))]]); ctx.fillRect(bx0, by0, bx1 - bx0, by1 - by0);
-    // floor
-    ctx.save(); poly(ctx, [[0, H], [W, H], [bx1, by1], [bx0, by1]]); ctx.clip();
-    if (kind === 'kitchen') {
-      const q = .085, cw = W / 13;
-      for (let k = 0; k < 40; k++) {
-        const d0 = 1 / (1 + k * q), d1 = 1 / (1 + (k + 1) * q); if (d0 < s * .98) break;
-        for (let j = -30; j < 44; j++) {
-          const xa = j * cw, xb = xa + cw;
-          const P = (x, d) => [vx + (x - vx) * d, vy + (H - vy) * d];
-          poly(ctx, [P(xa, d0), P(xb, d0), P(xb, d1), P(xa, d1)], (j + k) % 2 ? '#2F3130' : '#E9E5DC');
-        }
-      }
-    } else {
-      const floor = hx(pick(r, ['#B07E4E', '#C19A6C', '#94704E', '#A88560', '#C6A47C'])), pw = W * btw(r, .045, .065);
-      ctx.lineWidth = 1; ctx.strokeStyle = css(lit(floor, -.4), .45);
-      for (let x = -W * 1.6; x < W * 2.6; x += pw) {
-        const a2 = [vx + (x - vx) * s, by1], b2 = [vx + (x + pw - vx) * s, by1];
-        poly(ctx, [[x, H], [x + pw, H], b2, a2], css(lit(floor, (r() - .5) * .14)));
-        ctx.beginPath(); ctx.moveTo(x, H); ctx.lineTo(...a2); ctx.stroke();
-        for (let k = 0; k < 3; k++) { const d = s + (1 - s) * r(), y = vy + (H - vy) * d; ctx.beginPath(); ctx.moveTo(vx + (x - vx) * d, y); ctx.lineTo(vx + (x + pw - vx) * d, y); ctx.stroke(); }
-      }
-    }
-    ctx.fillStyle = lin(ctx, 0, by1, 0, H, [[0, 'rgba(30,20,12,.3)'], [1, 'rgba(30,20,12,0)']]); ctx.fillRect(0, by1, W, H - by1);
-    ctx.restore();
-    // baseboards and crown
-    const bb = PX(.12);
-    poly(ctx, [V(0, 0, s), V(W, 0, s), V(W, .12, s), V(0, .12, s)], css(lit(wall, .1)));
-    poly(ctx, [[0, H], V(0, 0, s), V(0, .12, s), [0, H - bb]], css(lit(wall, .02)));
-    poly(ctx, [[W, H], V(W, 0, s), V(W, .12, s), [W, H - bb]], css(lit(wall, -.08)));
-    ctx.strokeStyle = 'rgba(40,30,20,.12)'; ctx.lineWidth = 2;
-    [[[0, 0], [bx0, by0]], [[W, 0], [bx1, by0]], [[bx0, by0], [bx1, by0]], [[bx0, by0], [bx0, by1]], [[bx1, by0], [bx1, by1]]].forEach(([a, b]) => { ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b); ctx.stroke(); });
-    // helpers
-    const box = (X0, X1, h0, h1, m0, m1, c, opt = {}) => {
-      const d0 = D(m0), d1 = D(m1);
-      if (X1 < vx) poly(ctx, [V(X1, h0, d0), V(X1, h0, d1), V(X1, h1, d1), V(X1, h1, d0)], css(lit(c, -.14)));
-      else if (X0 > vx) poly(ctx, [V(X0, h0, d0), V(X0, h0, d1), V(X0, h1, d1), V(X0, h1, d0)], css(lit(c, -.14)));
-      if (PX(h1) < H - vy) poly(ctx, [V(X0, h1, d0), V(X1, h1, d0), V(X1, h1, d1), V(X0, h1, d1)], css(lit(c, opt.top ?? .1)));
-      const [ax, ay] = V(X0, h0, d1), [bx, by] = V(X1, h1, d1);
-      ctx.fillStyle = opt.front || lin(ctx, 0, by, 0, ay, [[0, css(c)], [1, css(lit(c, -.1))]]); ctx.fillRect(ax, by, bx - ax, ay - by);
-      return { ax, ay, bx, by };
-    };
-    const floorShadow = (X0, X1, m0, m1, a = .32) => {
-      const [cx, cy] = V((X0 + X1) / 2, 0, D((m0 + m1) / 2)), w = (X1 - X0) * D(m1) * .62;
-      ctx.save(); ctx.translate(cx, cy); ctx.scale(1, .22); ctx.fillStyle = rad(ctx, 0, 0, 0, w, [[0, `rgba(22,15,10,${a})`], [1, 'rgba(22,15,10,0)']]); ctx.beginPath(); ctx.arc(0, 0, w, 0, TAU); ctx.fill(); ctx.restore();
-    };
-    const wallW = W; // world width at the back wall spans 0..W in front-plane px
-    const frame = hx(pick(r, ['#F1EDE6', '#F1EDE6', '#2B2B28']));
-    const winAt = (Xc, wwm, h0, h1) => {
-      const X0 = Xc - PX(wwm) / 2, X1 = Xc + PX(wwm) / 2;
-      const [x, y] = V(X0, h1, s), [x2, y2] = V(X1, h0, s), w = x2 - x, h = y2 - y;
-      ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
-      sky(ctx, x, y, w, h, mood);
-      const bt = y + h * btw(r, .35, .6), bc = mix(hx(pick(r, ['#9A5A44', '#B48A62', '#8C8579', '#A8735A'])), hx('#E7E2D8'), .42);
-      ctx.fillStyle = css(bc); ctx.fillRect(x - 2, bt, w + 4, h);
-      const ow = w * .13, oh = ow * 1.75;
-      for (let yy = bt + oh * .45; yy < y + h; yy += oh * 1.55) for (let xx = x - ow * r(); xx < x + w; xx += ow * 1.9) { ctx.fillStyle = css(mix(hx('#3B3A39'), bc, .42)); ctx.fillRect(xx, yy, ow, oh); }
-      ctx.fillStyle = 'rgba(255,248,236,.3)'; ctx.fillRect(x, y, w, h);
-      ctx.restore();
-      const t = w * .06; ctx.fillStyle = css(frame);
-      ctx.fillRect(x - t, y - t, w + 2 * t, t * 1.3); ctx.fillRect(x - t, y + h - t * .3, w + 2 * t, t * 1.6);
-      ctx.fillRect(x - t, y - t, t * 1.3, h + 2 * t); ctx.fillRect(x + w - t * .3, y - t, t * 1.3, h + 2 * t);
-      ctx.fillRect(x, y + h * .5 - t * .5, w, t);
-      if (r() < .5) ctx.fillRect(x + w / 2 - t * .3, y, t * .6, h);
-      ctx.fillStyle = 'rgba(30,20,10,.12)'; ctx.fillRect(x - t, y + h + t * 1.3, w + 2 * t, t * .6);
-      ctx.save(); ctx.globalCompositeOperation = 'screen';
-      ctx.fillStyle = rad(ctx, x + w / 2, y + h / 2, 0, w * 1.9, [[0, 'rgba(255,240,214,.4)'], [1, 'rgba(255,240,214,0)']]); ctx.fillRect(x - w * 2, y - h, w * 5, h * 3);
-      ctx.restore();
-      // sunlight thrown forward onto the floor
-      const sk = btw(r, -.25, .35), dA = D(.15), dB = D(2.4);
-      const Q = (X, d) => { const [px, py] = V(X + sk * PX(d * 2), 0, d); return [px, py]; };
-      ctx.save(); ctx.globalCompositeOperation = 'screen';
-      ctx.fillStyle = lin(ctx, 0, V(0, 0, dA)[1], 0, V(0, 0, dB)[1], [[0, 'rgba(255,232,196,.42)'], [1, 'rgba(255,232,196,0)']]);
-      poly(ctx, [Q(X0, dA), Q(X1, dA), Q(X1, dB), Q(X0, dB)]); ctx.fill();
-      ctx.restore();
-      return { X0, X1, x, y, w, h };
-    };
-    const rad8 = (X0, X1) => { box(X0, X1, .12, .62, 0, .12, hx('#E9E5DD'), { top: .15 }); const [ax, ay] = V(X0, .12, D(.12)), [bx, by] = V(X1, .62, D(.12)); ctx.fillStyle = 'rgba(0,0,0,.12)'; const n = 14; for (let i = 1; i < n; i++) ctx.fillRect(ax + (bx - ax) * i / n, by + 3, 1.5, ay - by - 6); };
-    const fabric = hx(pick(r, ['#CFC5B3', '#5C6670', '#B88A5A', '#7E8770', '#D8D2C6', '#8C6B5A']));
-    const accent = hx(pick(r, ['#A47550', '#3E4A45', '#C2B49B', '#6F7F8C']));
-
-    if (kind === 'living') {
-      const span = bx1 - bx0, two = W > H;
-      const wins = two ? [W * .2, W * .8] : [W * .5];
-      wins.forEach(Xc => { const w = winAt(Xc, .95, .72, 2.45); rad8(w.X0 + PX(.05), w.X1 - PX(.05)); });
-      const Xc = W * btw(r, .45, .55), sw = PX(two ? 2.1 : 1.6);
-      if (two) { // art between windows
-        const [ax, ay] = V(Xc - PX(.42), 1.3, s), [bx, by] = V(Xc + PX(.42), 1.95, s);
-        ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.fillRect(ax + 4, ay + 4, bx - ax, by - ay);
-        ctx.fillStyle = '#2B2A27'; ctx.fillRect(ax, ay, bx - ax, by - ay);
-        ctx.fillStyle = '#F2EEE6'; ctx.fillRect(ax + 3, ay + 3, bx - ax - 6, by - ay - 6);
-        ctx.fillStyle = css(accent); ctx.fillRect(ax + (bx - ax) * .2, ay + (by - ay) * .25, (bx - ax) * .6, (by - ay) * .3);
-        ctx.fillStyle = css(lit(fabric, -.2)); ctx.fillRect(ax + (bx - ax) * .2, ay + (by - ay) * .58, (bx - ax) * .6, (by - ay) * .16);
-      }
-      // rug
-      const rd0 = D(.7), rd1 = D(2.55), rx0 = Xc - PX(1.3), rx1 = Xc + PX(1.3);
-      poly(ctx, [V(rx0, 0, rd0), V(rx1, 0, rd0), V(rx1, 0, rd1), V(rx0, 0, rd1)], css(hx(pick(r, ['#D9CFBE', '#B9AE9B', '#8E8577', '#C9B8A0']))));
-      poly(ctx, [V(rx0 + PX(.12), 0, D(.82)), V(rx1 - PX(.12), 0, D(.82)), V(rx1 - PX(.12), 0, D(2.43)), V(rx0 + PX(.12), 0, D(2.43))], 'rgba(255,255,255,.08)');
-      // sofa
-      const X0 = Xc - sw / 2, X1 = Xc + sw / 2, arm = PX(.2);
-      floorShadow(X0, X1, .1, .95);
-      box(X0 + arm * .5, X1 - arm * .5, .4, .84, .08, .3, lit(fabric, -.04));
-      box(X0 + arm, X1 - arm, .12, .44, .1, .93, fabric, { top: .14 });
-      const c = V(Xc, .44, D(.93)); ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.fillRect(c[0] - 1, V(Xc, .44, D(.3))[1], 2, c[1] - V(Xc, .44, D(.3))[1] + PX(.3) * D(.93));
-      box(X0, X0 + arm, .12, .64, .08, .95, lit(fabric, -.02));
-      box(X1 - arm, X1, .12, .64, .08, .95, lit(fabric, -.02));
-      box(X0 + arm * 1.2, X0 + arm * 1.2 + PX(.42), .44, .82, .28, .4, accent, { top: .2 });
-      box(X1 - arm * 1.2 - PX(.42), X1 - arm * 1.2, .44, .82, .28, .4, lit(accent, .25), { top: .2 });
-      // coffee table
-      const tc = hx(pick(r, ['#6B4E37', '#2E2C29', '#B69873'])), t0 = Xc - PX(.55), t1 = Xc + PX(.55);
-      floorShadow(t0, t1, 1.25, 1.7, .25);
-      [[t0, 1.25], [t1 - PX(.05), 1.25]].forEach(([lx, m]) => box(lx, lx + PX(.05), 0, .36, m, m + .05, lit(tc, -.2)));
-      [[t0, 1.65], [t1 - PX(.05), 1.65]].forEach(([lx, m]) => box(lx, lx + PX(.05), 0, .36, m - .05, m, lit(tc, -.2)));
-      box(t0, t1, .36, .41, 1.25, 1.7, tc, { top: .18 });
-      box(Xc - PX(.12), Xc + PX(.02), .41, .48, 1.38, 1.5, hx('#EFEAE0'));
-      // floor lamp
-      const lx = X1 + PX(.35);
-      box(lx - PX(.012), lx + PX(.012), 0, 1.5, .4, .42, hx('#2B2A27'));
-      box(lx - PX(.16), lx + PX(.16), 1.38, 1.62, .3, .52, hx('#EDE5D6'), { top: .2 });
-    } else if (kind === 'bed') {
-      const left = r() < .5, Xw = left ? W * .24 : W * .76;
-      const w = winAt(Xw, 1.05, .75, 2.45); rad8(w.X0 + PX(.05), w.X1 - PX(.05));
-      const Xc = left ? W * .62 : W * .38, bw2 = PX(1.6), X0 = Xc - bw2 / 2, X1 = Xc + bw2 / 2;
-      floorShadow(X0, X1, .1, 2.1, .3);
-      box(X0 - PX(.04), X1 + PX(.04), 0, 1.1, 0, .07, hx(pick(r, ['#6B4E37', '#C9BDA6', '#3E4A45', '#8C7A66'])));
-      box(X0, X1, .08, .4, .07, 2.05, hx('#5A4A3C'));
-      box(X0 + PX(.02), X1 - PX(.02), .4, .6, .07, 2.02, hx('#F1EEE8'), { top: .2 });
-      box(X0 + PX(.12), Xc - PX(.05), .6, .74, .12, .45, hx('#FBF9F5'), { top: .25 });
-      box(Xc + PX(.05), X1 - PX(.12), .6, .74, .12, .45, hx('#FBF9F5'), { top: .25 });
-      box(X0 - PX(.01), X1 + PX(.01), .58, .62, 1.45, 2.04, accent, { top: .12 });
-      [[X0 - PX(.62), X0 - PX(.12)], [X1 + PX(.12), X1 + PX(.62)]].forEach(([a, b]) => {
-        box(a, b, 0, .55, .02, .45, hx('#8A6A4E'));
-        const cxl = (a + b) / 2; box(cxl - PX(.03), cxl + PX(.03), .55, .82, .2, .26, hx('#2B2A27'));
-        box(cxl - PX(.15), cxl + PX(.15), .82, 1.02, .1, .36, hx('#EFE7D8'), { top: .2 });
-      });
-    } else {
-      const cab = hx(pick(r, ['#E9E5DC', '#3F4A45', '#5B6B78', '#C9B79C', '#2F3A44'])), top = hx(pick(r, ['#EDEBE6', '#D9D4CA', '#8C7158']));
-      const Xl = 0, Xr = W, wc = W * btw(r, .42, .58);
-      // backsplash tile
-      const [tx0, ty0] = V(Xl, 1.55, s), [tx1, ty1] = V(Xr, .92, s), tw = (tx1 - tx0) / 34, th = tw * .5;
-      ctx.fillStyle = '#D5D1C8'; ctx.fillRect(tx0, ty0, tx1 - tx0, ty1 - ty0);
-      let rw = 0; for (let y = ty0; y < ty1; y += th, rw++) for (let x = tx0 - (rw % 2) * tw / 2; x < tx1; x += tw) { ctx.fillStyle = css(lit(hx('#F3F1EC'), (r() - .5) * .04)); ctx.fillRect(x + .7, y + .7, tw - 1.4, th - 1.4); }
-      const w = winAt(wc, 1.1, 1.0, 2.2);
-      // shelves either side of the window
-      [[Xl + PX(.3), w.X0 - PX(.35)], [w.X1 + PX(.35), Xr - PX(.3)]].forEach(([a, b]) => {
-        if (b - a < PX(.4)) return;
-        box(a, b, 1.86, 1.9, 0, .26, hx('#8A6A4E'), { top: .15 });
-        for (let x = a + PX(.1); x < b - PX(.25); x += PX(btw(r, .18, .32))) { const h = btw(r, .1, .28); box(x, x + PX(btw(r, .1, .18)), 1.9, 1.9 + h, .04, .2, hx(pick(r, ['#EFEAE0', '#D8CDB9', '#3E4A45', '#B9A58A', '#FFFFFF']))); }
-      });
-      box(Xl, Xr, 0, .9, 0, .62, cab, { top: 0 });
-      const [fax, fay] = V(Xl, 0, D(.62)), [fbx, fby] = V(Xr, .9, D(.62)), dn = 9;
-      ctx.strokeStyle = css(lit(cab, -.25)); ctx.lineWidth = 1.5;
-      for (let i = 1; i < dn; i++) { const x = fax + (fbx - fax) * i / dn; ctx.beginPath(); ctx.moveTo(x, fby + 3); ctx.lineTo(x, fay - PX(.1) * D(.62)); ctx.stroke(); }
-      ctx.fillStyle = '#9A958C'; for (let i = 0; i < dn; i++) { const x = fax + (fbx - fax) * (i + .5) / dn; ctx.fillRect(x - PX(.07) * D(.62), fby + (fay - fby) * .16, PX(.14) * D(.62), 2.5); }
-      ctx.fillStyle = css(lit(cab, -.5)); ctx.fillRect(fax, fay - PX(.1) * D(.62), fbx - fax, PX(.1) * D(.62));
-      box(Xl - PX(.02), Xr + PX(.02), .9, .95, 0, .66, top, { top: .12 });
-      // faucet
-      box(wc - PX(.015), wc + PX(.015), .95, 1.25, .12, .15, hx('#B9B6AF'));
-      box(wc - PX(.015), wc + PX(.015), 1.2, 1.25, .15, .32, hx('#B9B6AF'));
-      // pendants
-      [wc - PX(.9), wc + PX(.9)].forEach(Xp => {
-        const d = D(1.1), [px, py] = V(Xp, 2.9, d), [qx, qy] = V(Xp, 2.05, d);
-        ctx.strokeStyle = '#2B2A27'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(qx, qy); ctx.stroke();
-        const rr = PX(.16) * d; ctx.fillStyle = '#2B2A27'; ctx.beginPath(); ctx.arc(qx, qy + rr * .9, rr, Math.PI, 0); ctx.fill();
-        ctx.fillStyle = rad(ctx, qx, qy + rr, 0, rr * 3, [[0, 'rgba(255,226,170,.5)'], [1, 'rgba(255,226,170,0)']]); ctx.fillRect(qx - rr * 3, qy, rr * 6, rr * 4);
-      });
-    }
-    // ambient occlusion at the far corners
-    ctx.fillStyle = lin(ctx, bx0, 0, bx0 + W * .05, 0, [[0, 'rgba(40,28,18,.12)'], [1, 'rgba(40,28,18,0)']]); ctx.fillRect(bx0, by0, W * .05, by1 - by0);
-    ctx.fillStyle = lin(ctx, bx1, 0, bx1 - W * .05, 0, [[0, 'rgba(40,28,18,.14)'], [1, 'rgba(40,28,18,0)']]); ctx.fillRect(bx1 - W * .05, by0, W * .05, by1 - by0);
-    finish(ctx, W, H, { vig: .26, grain: .08 });
-  }
-
-  /* ---------- Loft window ---------- */
-  function loft(ctx, W, H, r, o) {
-    const base = hx(pick(r, ['#8A4A36', '#9C5A41', '#E6E0D4', '#7F4634']));
-    const mortar = base[0] > 200 ? hx('#D3CCBF') : hx('#B8A08A'), unit = Math.min(W, H);
-    bricks(ctx, 0, 0, W, H, base, mortar, r, Math.max(4, unit / 95));
-    const wx = W * btw(r, .1, .16), wy = H * .06, ww = W - wx * 2, wh = H * btw(r, .68, .74);
-    const t = Math.max(3, ww * .008), rv = ww * .025;
-    ctx.save(); ctx.beginPath(); ctx.rect(wx, wy, ww, wh); ctx.clip();
-    sky(ctx, wx, wy, ww, wh, o.mood || pick(r, ['gold', 'day', 'dusk']));
-    skyline(ctx, wx, wy + wh * .92, ww, wh * .55, r, 'rgba(120,126,140,.8)', true);
-    skyline(ctx, wx, wy + wh * 1.02, ww, wh * .3, r, 'rgba(82,78,80,.92)', false);
-    ctx.fillStyle = 'rgba(255,246,232,.2)'; ctx.fillRect(wx, wy, ww, wh);
-    ctx.restore();
-    const rows = 6, cols = Math.max(4, Math.round(ww / (wh / rows) * .8));
-    for (let i = 0; i < rows; i++) for (let j = 0; j < cols; j++) { const v = r(); if (v < .22) { ctx.fillStyle = v < .08 ? 'rgba(30,32,34,.32)' : 'rgba(255,255,255,.07)'; ctx.fillRect(wx + j * ww / cols, wy + i * wh / rows, ww / cols, wh / rows); } }
-    ctx.fillStyle = '#242624';
-    for (let i = 0; i <= rows; i++) ctx.fillRect(wx, wy + i * wh / rows - t / 2, ww, t);
-    for (let j = 0; j <= cols; j++) ctx.fillRect(wx + j * ww / cols - t / 2, wy, t, wh);
-    ctx.fillRect(wx - t, wy - t, ww + t * 2, t * 2.2); ctx.fillRect(wx - t, wy + wh - t, ww + t * 2, t * 2.4);
-    poly(ctx, [[wx - rv, wy - rv], [wx, wy], [wx, wy + wh], [wx - rv, wy + wh + rv]], css(lit(base, -.25)));
-    poly(ctx, [[wx + ww + rv, wy - rv], [wx + ww, wy], [wx + ww, wy + wh], [wx + ww + rv, wy + wh + rv]], css(lit(base, .1)));
-    poly(ctx, [[wx - rv, wy - rv], [wx + ww + rv, wy - rv], [wx + ww, wy], [wx, wy]], css(lit(base, -.45)));
-    ctx.fillStyle = '#BDB7AC'; ctx.fillRect(wx - rv * 2, wy + wh + rv * .4, ww + rv * 4, H * .028);
-    ctx.fillStyle = 'rgba(20,14,10,.28)'; ctx.fillRect(wx - rv * 2, wy + wh + rv * .4 + H * .028, ww + rv * 4, H * .018);
-    const fy = H * .9;
-    ctx.fillStyle = lin(ctx, 0, fy, 0, H, [[0, '#8F8B84'], [1, '#B3AEA5']]); ctx.fillRect(0, fy, W, H - fy);
-    ctx.fillStyle = lin(ctx, 0, fy, 0, H, [[0, 'rgba(255,246,230,.35)'], [1, 'rgba(255,246,230,0)']]); ctx.fillRect(wx, fy, ww, H - fy);
-    ctx.save(); ctx.globalCompositeOperation = 'screen';
-    ctx.fillStyle = rad(ctx, W / 2, wy + wh * .5, ww * .2, ww * .85, [[0, 'rgba(255,238,210,.18)'], [1, 'rgba(255,238,210,0)']]); ctx.fillRect(0, 0, W, H);
-    ctx.restore();
-    finish(ctx, W, H, { vig: .34 });
-  }
-
-  /* ---------- Rooftop water tower at dusk ---------- */
-  function roof(ctx, W, H, r, o) {
-    ctx.fillStyle = lin(ctx, 0, 0, 0, H, [[0, '#46526A'], [.42, '#8F8896'], [.72, '#D9A886'], [.9, '#EFC9A0']]); ctx.fillRect(0, 0, W, H);
-    const sx = W * btw(r, .15, .45);
-    ctx.fillStyle = rad(ctx, sx, H * .76, 0, W * .55, [[0, 'rgba(255,214,160,.55)'], [1, 'rgba(255,214,160,0)']]); ctx.fillRect(0, 0, W, H);
-    skyline(ctx, 0, H * .77, W, H * .44, r, 'rgba(96,100,120,.72)', true);
-    skyline(ctx, 0, H * .82, W, H * .2, r, 'rgba(64,58,62,.95)', true);
-    const ry = H * .8;
-    ctx.fillStyle = lin(ctx, 0, ry, 0, H, [[0, '#3A3432'], [1, '#221E1D']]); ctx.fillRect(0, ry, W, H - ry);
-    ctx.fillStyle = '#5A514C'; ctx.fillRect(0, ry, W, H * .012);
-    ctx.fillStyle = 'rgba(255,214,170,.18)'; ctx.fillRect(0, ry, W, H * .004);
-    const bx = W * btw(r, .05, .2), bw = W * .12; ctx.fillStyle = '#2E2927'; ctx.fillRect(bx, ry - H * .1, bw, H * .1 + 2); ctx.fillStyle = '#4A423E'; ctx.fillRect(bx - 3, ry - H * .1, bw + 6, H * .01);
-    for (let i = 0; i < 3; i++) { const vx2 = W * btw(r, .3, .5); ctx.fillStyle = '#2A2523'; ctx.fillRect(vx2, ry - H * btw(r, .02, .05), W * .008, H * .06); }
-    const u = Math.min(W, H), tw = u * .26, tx = W * (sx < W * .3 ? btw(r, .55, .7) : btw(r, .62, .76)), tankH = tw * 1.05, legH = tw * .62, tb = ry + H * .02 - legH;
-    ctx.strokeStyle = '#1F1B1A'; ctx.lineWidth = Math.max(2, u / 260);
-    const legs = [tx - tw * .42, tx - tw * .14, tx + tw * .14, tx + tw * .42];
-    legs.forEach(x => { ctx.beginPath(); ctx.moveTo(x, tb); ctx.lineTo(x + (x - tx) * .08, ry + H * .02); ctx.stroke(); });
-    ctx.lineWidth = Math.max(1, u / 500);
-    for (let i = 0; i < 3; i++) { const a = legs[i], b = legs[i + 1]; ctx.beginPath(); ctx.moveTo(a, tb); ctx.lineTo(b, ry); ctx.moveTo(b, tb); ctx.lineTo(a, ry); ctx.moveTo(a, tb + legH * .5); ctx.lineTo(b, tb + legH * .5); ctx.stroke(); }
-    ctx.fillStyle = '#1F1B1A'; ctx.fillRect(tx - tw * .52, tb - u * .012, tw * 1.04, u * .016);
-    const t0 = tb - tankH, warmSide = sx < tx;
-    ctx.fillStyle = lin(ctx, tx - tw / 2, 0, tx + tw / 2, 0, warmSide ? [[0, '#B0805C'], [.3, '#8A6248'], [1, '#2E2420']] : [[0, '#2E2420'], [.7, '#8A6248'], [1, '#B0805C']]);
-    ctx.fillRect(tx - tw / 2, t0, tw, tankH);
-    ctx.fillStyle = 'rgba(0,0,0,.14)'; for (let x = tx - tw / 2; x < tx + tw / 2; x += tw / 22) ctx.fillRect(x, t0, 1, tankH);
-    ctx.fillStyle = '#1E1A19'; for (let i = 1; i < 8; i++) ctx.fillRect(tx - tw / 2, t0 + tankH * i / 8, tw, Math.max(1.5, u / 380));
-    poly(ctx, [[tx - tw * .54, t0 + 1], [tx + tw * .54, t0 + 1], [tx, t0 - tw * .36]], null);
-    ctx.fillStyle = lin(ctx, tx - tw / 2, 0, tx + tw / 2, 0, warmSide ? [[0, '#7A6A5E'], [1, '#2A2422']] : [[0, '#2A2422'], [1, '#7A6A5E']]); ctx.fill();
-    ctx.fillStyle = '#1E1A19'; ctx.fillRect(tx - 2, t0 - tw * .42, 4, tw * .08);
-    ctx.fillStyle = 'rgba(20,14,12,.5)'; ctx.fillRect(tx - tw * .62, ry + H * .02, tw * 1.3, H * .012);
-    finish(ctx, W, H, { vig: .3 });
-  }
-
-  function draw(spec, W, H) {
-    const parts = String(spec.g).split('-'), scene = parts[0], o = {};
-    parts.slice(1).forEach(f => {
-      if (MATS[f]) o.mat = f; else if (['day', 'gold', 'dusk'].includes(f)) o.mood = f;
-      else if (f === 'fe') o.fe = true; else if (f === 'nofe') o.fe = false; else if (f === 'top') o.top = true; else if (f === 'notop') o.top = false;
-      else if (['living', 'bed'].includes(f)) o.kind = f;
-    });
-    const c = document.createElement('canvas'); c.width = W; c.height = H;
-    const ctx = c.getContext('2d'), r = rng(spec.s);
-    if (scene === 'room') room(ctx, W, H, r, o);
-    else if (scene === 'kitchen') room(ctx, W, H, r, { ...o, kind: 'kitchen' });
-    else if (scene === 'loft') loft(ctx, W, H, r, o);
-    else if (scene === 'roof') roof(ctx, W, H, r, o);
-    else facade(ctx, W, H, r, o);
-    return c;
-  }
-
-  const SIZES = { land: [[760, 506], [1500, 1000]], port: [[600, 750], [1120, 1400]], hero: [[900, 760], [1640, 1380]], sq: [[420, 420], [420, 420]] };
-  const cache = new Map(), queue = []; let busy = false;
-  function pump() {
-    if (busy) return; busy = true;
-    const step = () => { const job = queue.shift(); if (!job) { busy = false; return; } try { job(); } catch (e) { console.error(e); } setTimeout(step, 0); };
-    setTimeout(step, 0);
-  }
-  function url(spec, a = 'land', big = false) {
-    const [w, h] = (SIZES[a] || SIZES.land)[big ? 1 : 0], key = `${spec.g}|${spec.s}|${w}x${h}`;
-    if (!cache.has(key)) cache.set(key, new Promise(res => {
-      queue.push(() => { const c = draw(spec, w, h); if (c.toBlob) c.toBlob(b => res(b ? URL.createObjectURL(b) : c.toDataURL('image/jpeg', .86)), 'image/jpeg', .86); else res(c.toDataURL('image/jpeg', .86)); });
-      pump();
-    }));
-    return cache.get(key);
-  }
-  function hydrate(root = document) {
-    const els = [...root.querySelectorAll('img[data-g]:not([data-done])')];
-    els.map(el => [el, el.getBoundingClientRect()]).sort((a, b) => a[1].top - b[1].top).forEach(([img, box]) => {
-      img.dataset.done = '1';
-      const a = img.dataset.a || 'land', big = box.width * Math.min(2, window.devicePixelRatio || 1) > (SIZES[a] || SIZES.land)[0][0] * 1.05;
-      url({ g: img.dataset.g, s: +img.dataset.s }, a, big).then(u => { img.src = u; img.classList.add('in'); });
-    });
-  }
-  return { url, hydrate, draw };
+  return { photo, url: spec => Promise.resolve(photo(spec).src) };
 })();
 
 /* Demo data. Every listing, inquiry and building here is fictional sample content for design review. */
 const TODAY = '2026-11-04';
 const HOODS = {
-  Williamsburg: { borough: 'Brooklyn', blurb: 'Waterfront parks, Bedford Avenue shops and the L train to Manhattan.', photo: { g: 'loft-gold', s: 21 }, lines: ['L', 'G', 'J', 'M', 'Z'], angle: -29, water: 'left', park: 'McCarren Park' },
+  Williamsburg: { borough: 'Brooklyn', blurb: 'Waterfront parks, Bedford Avenue shops and the L train to Manhattan.', photo: { g: 'facade-red-top-gold', s: 21 }, lines: ['L', 'G', 'J', 'M', 'Z'], angle: -29, water: 'left', park: 'McCarren Park' },
   Greenpoint: { borough: 'Brooklyn', blurb: 'Quiet residential blocks near McCarren and Transmitter parks, on the G line.', photo: { g: 'facade-cream-top-gold', s: 34 }, lines: ['G'], angle: -27, water: 'left', park: 'McGolrick Park' },
   Astoria: { borough: 'Queens', blurb: 'Ditmars, Steinway Street and Astoria Park on the East River, on the N and W.', photo: { g: 'roof', s: 8 }, lines: ['N', 'W'], angle: -32, water: 'top', park: 'Astoria Park' },
   Ridgewood: { borough: 'Queens', blurb: 'Blocks of brick row houses, Fresh Pond Road shops and the M train.', photo: { g: 'facade-tan-top-gold', s: 52 }, lines: ['M'], angle: -12, water: null, park: 'Grover Cleveland Park' },
@@ -1449,9 +1089,14 @@ const pub = () => S.listings.filter(l => l.status === 'published');
 const cover = l => l.photos.find(p => p.id === l.coverId) || l.photos[0];
 const gallery = l => { const c = cover(l); return c ? [c, ...l.photos.filter(p => p !== c)] : []; };
 const bld = id => BUILDINGS.find(b => b.id === id);
-const KIND = { room: 'Room', 'room-living': 'Living room', 'room-bed': 'Bedroom', kitchen: 'Kitchen', loft: 'Living area with loft windows', roof: 'Rooftop view', facade: 'Building exterior' };
-const altFor = (p, l) => { if (!p) return ''; if (p.src) return p.name ? `Photo: ${p.name}` : 'Uploaded photo'; const k = p.g.startsWith('room-bed') ? 'room-bed' : p.g.startsWith('room') ? 'room-living' : p.g.split('-')[0]; return `Illustrative rendering: ${(KIND[k] || 'Apartment').toLowerCase()}${l ? ', ' + l.neighborhood : ''}`; };
-const pimg = (p, a = 'land', alt = '') => !p ? '<span class="ph noimg" aria-hidden="true"></span>' : p.src ? `<img class="ph" src="${p.src}" alt="${esc(alt)}">` : `<img class="ph" src="${BLANK}" data-g="${p.g}" data-s="${p.s}" data-a="${a}" alt="${esc(alt)}">`;
+const altFor = p => !p ? '' : `${IMG.photo(p).alt}${p.src ? '' : ' (Unsplash stock photo)'}`;
+function pimg(p, a = 'land', alt = '') {
+  if (!p) return '<span class="ph noimg" aria-hidden="true"></span>';
+  const photo = IMG.photo(p), hero = a === 'hero';
+  const sizes = a === 'sq' ? '120px' : hero ? '(max-width: 900px) 100vw, 60vw' : '(max-width: 800px) 100vw, 75vw';
+  const responsive = photo.thumbnail ? ` width="${photo.width}" height="${photo.height}" srcset="${photo.thumbnail} ${photo.thumbnailWidth}w, ${photo.src} ${photo.width}w" sizes="${sizes}"` : '';
+  return `<img class="ph" src="${esc(photo.src)}"${responsive} alt="${esc(alt || altFor(p))}" loading="${hero ? 'eager' : 'lazy'}" decoding="async"${hero ? ' fetchpriority="high"' : ''}>`;
+}
 const lineBul = ls => `<span class="lines" role="img" aria-label="Nearby trains: ${ls.join(', ')}">${ls.map(x => `<span class="line" aria-hidden="true">${x}</span>`).join('')}</span>`;
 let toastT;
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3200); }
@@ -1509,7 +1154,7 @@ function footer() {
       <div><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#contact">Contact</a></li><li><a href="#admin">Founder admin (demo)</a></li></ul></div>
     </div>
     <div class="ftr-legal">${docs.map(([k, t]) => `<button type="button" data-act="legal" data-doc="${k}">${t}</button>`).join('')}</div>
-    <p class="ftr-fine">${esc(st.name)}, New York. ${st.license ? esc(st.license) : '<span class="ph-txt">License details to be supplied.</span>'} Equal Housing Opportunity. Listings, photographs and figures on this prototype are illustrative samples. © 2026 ${esc(st.name)}.</p>
+    <p class="ftr-fine">${esc(st.name)}, New York. ${st.license ? esc(st.license) : '<span class="ph-txt">License details to be supplied.</span>'} Equal Housing Opportunity. Listings and figures on this prototype are samples. Stock photos do not depict the listed properties. <a href="photo-credits.html">Unsplash photo credits</a>. © 2026 ${esc(st.name)}.</p>
   </div></footer>`;
 }
 const LEGAL = {
@@ -1554,7 +1199,7 @@ function viewHome() {
         <p class="lede">${esc(c.heroSub)}</p>
         <div class="cta-row"><a class="btn" href="#apartments">Explore apartments</a><a class="btn ghost" href="#owners">Lease your property</a></div>
       </div>
-      <figure class="hero-fig">${pimg({ g: 'facade-brick-fe-top-gold', s: 3 }, 'hero', 'Illustrative rendering of a brick walk-up with a fire escape in late afternoon light')}<figcaption>Illustrative rendering, not a photo</figcaption></figure>
+      <figure class="hero-fig">${pimg({ g: 'facade-brick-fe-top-gold', s: 3 }, 'hero', 'New York apartment facade with exterior fire escapes (Unsplash stock photo)')}<figcaption>Photo by <a href="https://unsplash.com/photos/oQpGg_uRPXQ" target="_blank" rel="noopener noreferrer">Aidan Murphy / Unsplash</a></figcaption></figure>
     </div>
     <div class="wrap">
       <form class="search" id="f-search" role="search" aria-label="Search apartments">
@@ -1577,11 +1222,11 @@ function viewHome() {
 
   <section class="sec tight" aria-labelledby="hoods-h"><div class="wrap">
     <div class="sec-head"><div><h2 class="t-1" id="hoods-h">Explore by neighborhood</h2><p class="lede">Start with the area, then narrow by rent and size.</p></div></div>
-    <div class="hoods">${Object.entries(HOODS).map(([n, h]) => { const k = all.filter(l => l.neighborhood === n).length; return `<a class="hood" href="#apartments" data-act="hood-go" data-hood="${n}"><div class="hood-media">${pimg(h.photo, 'port', `Illustrative rendering for ${n}`)}</div><h3>${n}<small>${h.borough}</small></h3><p>${h.blurb}</p><span class="n">${k} sample apartment${k === 1 ? '' : 's'}</span></a>`; }).join('')}</div>
+    <div class="hoods">${Object.entries(HOODS).map(([n, h]) => { const k = all.filter(l => l.neighborhood === n).length; return `<a class="hood" href="#apartments" data-act="hood-go" data-hood="${n}"><div class="hood-media">${pimg(h.photo, 'port', `New York architecture, sample neighborhood imagery for ${n} (Unsplash stock photo)`)}</div><h3>${n}<small>${h.borough}</small></h3><p>${h.blurb}</p><span class="n">${k} sample apartment${k === 1 ? '' : 's'}</span></a>`; }).join('')}</div>
   </div></section>
 
   <section class="band" aria-labelledby="own-h"><div class="wrap band-grid">
-    <div class="band-media">${pimg({ g: 'facade-lime-dusk-top', s: 11 }, 'land', 'Illustrative rendering of a limestone facade at dusk')}</div>
+    <div class="band-media">${pimg({ g: 'facade-lime-dusk-top', s: 11 }, 'land', 'New York apartment building with exterior fire escapes (Unsplash stock photo)')}</div>
     <div>
       <h2 class="t-1" id="own-h">${esc(c.ownerTitle)}</h2>
       <p class="lede" style="margin-top:20px">${esc(c.ownerBody)}</p>
@@ -1662,7 +1307,6 @@ function renderResults() {
   $$('[data-act="seg"]').forEach(b => b.setAttribute('aria-pressed', S.f[b.dataset.k] === b.dataset.v));
   const n = keys.filter(k => !['q', 'hoods', 'building'].includes(k)).length, t = $('[data-act="ftoggle"]');
   if (t) t.textContent = n ? `Filters (${n})` : 'Filters';
-  IMG.hydrate(el);
 }
 
 /* ---------- buildings ---------- */
@@ -1670,7 +1314,7 @@ function viewBuildings() {
   return `<section class="wrap page-head"><h1 class="t-1" id="main-h" tabindex="-1">Buildings</h1><p class="lede">Each building page gathers its available apartments, access details and the neighborhood in one place.</p><p class="note" style="margin-top:16px"><b>Review note:</b> sample buildings. Real building names and photos to be supplied by Chai Real Estate.</p></section>
   <section class="wrap" style="padding-bottom:clamp(64px,8vw,120px)">${BUILDINGS.map(b => {
     const n = pub().filter(l => l.building === b.id);
-    return `<article class="bld"><div class="bld-media">${pimg(b.photo, 'land', `Illustrative rendering of the ${b.name}`)}</div><div><span class="tag dark">Sample building</span><h2 style="margin-top:14px">${esc(b.name)}</h2><dl><dt>Neighborhood</dt><dd>${b.hood}, ${HOODS[b.hood].borough}</dd><dt>Location</dt><dd>Near ${esc(b.cross)}</dd><dt>Building</dt><dd>${b.type}, ${b.floors} floors, ${b.access.toLowerCase()}</dd><dt>Trains</dt><dd>${lineBul(HOODS[b.hood].lines.slice(0, 3))}</dd></dl>
+    return `<article class="bld"><div class="bld-media">${pimg(b.photo, 'land', `New York apartment exterior, stock photo for the sample ${b.name}`)}</div><div><span class="tag dark">Sample building</span><h2 style="margin-top:14px">${esc(b.name)}</h2><dl><dt>Neighborhood</dt><dd>${b.hood}, ${HOODS[b.hood].borough}</dd><dt>Location</dt><dd>Near ${esc(b.cross)}</dd><dt>Building</dt><dd>${b.type}, ${b.floors} floors, ${b.access.toLowerCase()}</dd><dt>Trains</dt><dd>${lineBul(HOODS[b.hood].lines.slice(0, 3))}</dd></dl>
       ${n.length ? `<a class="btn" href="#apartments" data-act="build-go" data-b="${b.id}">See ${n.length} available apartment${n.length > 1 ? 's' : ''}</a>` : `<p class="muted">No apartments available right now.</p>`}</div></article>`;
   }).join('')}</section>`;
 }
@@ -1804,7 +1448,7 @@ function viewOwners() {
       <p class="lede" style="margin-top:26px">Chai Real Estate markets vacant apartments, answers every inquiry, runs the viewings and keeps you informed each week until a lease is signed. You approve the price, the listing and the tenant.</p>
       <div class="cta-row"><button class="btn" type="button" data-act="scrollto" data-target="proposal">Request a leasing proposal</button><button class="btn ghost" type="button" data-act="scrollto" data-target="process-h">See the process</button></div>
       <p class="note" style="margin-top:24px"><b>Review note:</b> service descriptions on this page are proposals for Chai Real Estate to confirm.</p></div>
-    <figure class="o-hero-fig" style="margin-top:0;margin-bottom:0">${pimg({ g: 'facade-brown-top-gold', s: 77 }, 'port', 'Illustrative rendering of a brownstone facade')}</figure>
+    <figure class="o-hero-fig" style="margin-top:0;margin-bottom:0">${pimg({ g: 'facade-brown-top-gold', s: 77 }, 'port', 'West Village brownstone facade (Unsplash stock photo)')}</figure>
   </div></section>
   <div class="wrap"><div class="o-intro"><h2 class="t-2">For owners and property managers</h2><p class="big">Most owners don't need another listing site. They need someone to take the phone calls, show the apartment on a Tuesday evening, follow up with applicants and tell them plainly how it is going. That is the job Chai Real Estate takes on.</p></div></div>
   <section class="sec" aria-labelledby="svc-h"><div class="wrap"><div class="sec-head"><div><h2 class="t-1" id="svc-h">What Chai Real Estate takes on</h2><p class="lede">Each part can be scoped to your building.</p></div></div>
@@ -1892,7 +1536,6 @@ function render() {
 }
 function after(h) {
   const changed = lastRoute !== h; lastRoute = h;
-  IMG.hydrate();
   $$('.bg').forEach(g => { const v = g.querySelector('.v'); const on = () => v.setAttribute('opacity', 1), off = () => { if (!g.querySelector('.hot')) v.setAttribute('opacity', 0); }; g.addEventListener('mouseenter', on); g.addEventListener('mouseleave', off); g.addEventListener('focus', on); g.addEventListener('blur', off); });
   const target = S.ui.scrollTo; S.ui.scrollTo = null;
   if (target && $('#' + target)) { requestAnimationFrame(() => { const el = $('#' + target); el.scrollIntoView({ behavior: 'auto', block: 'start' }); el.focus?.({ preventScroll: true }); }); }
@@ -1919,7 +1562,7 @@ Object.assign(ACT, {
   relax: (b) => { const k = b.dataset.k; S.f[k] = Array.isArray(S.f[k]) ? [] : defaultFilters()[k]; syncFilterInputs(); if (k === 'building') render(); else renderResults(); },
   clear: () => { S.f = defaultFilters(); render(); $('#f-q')?.focus(); toast('Filters cleared'); },
   ftoggle: (b) => { const f = $('#fb'), o = !f.classList.contains('open'); f.classList.toggle('open', o); b.setAttribute('aria-expanded', o); },
-  thumb: (b) => { S.ui.gi = +b.dataset.i; const l = curListing(); $('#gal').innerHTML = galleryHTML(l); IMG.hydrate($('#gal')); $(`.thumbs [data-i="${S.ui.gi}"]`)?.focus(); },
+  thumb: (b) => { S.ui.gi = +b.dataset.i; const l = curListing(); $('#gal').innerHTML = galleryHTML(l); $(`.thumbs [data-i="${S.ui.gi}"]`)?.focus(); },
   lb: (b) => { const l = curListing(); S.ui.lb = { photos: gallery(l), i: +b.dataset.i, l }; showLb(); $('#lb').showModal(); },
   'lb-prev': () => { const s = S.ui.lb; s.i = (s.i - 1 + s.photos.length) % s.photos.length; showLb(); },
   'lb-next': () => { const s = S.ui.lb; s.i = (s.i + 1) % s.photos.length; showLb(); },
@@ -1937,7 +1580,7 @@ const d_back = () => S.draft && S.draft.id ? 'admin-edit-' + S.draft.id : 'admin
 function showLb() {
   const { photos, i, l } = S.ui.lb, p = photos[i], img = $('#lb-img');
   $('#lb-count').textContent = `Photo ${i + 1} of ${photos.length}`;
-  $('#lb-cap').textContent = `${l.title}. ${p.src ? 'Uploaded photo.' : 'Illustrative rendering, to be replaced with real photography.'}`;
+  $('#lb-cap').textContent = `${l.title}. ${p.src ? 'Uploaded photo.' : `Stock photo by ${IMG.photo(p).photographer} / Unsplash. Sample imagery, not the listed property.`}`;
   img.alt = altFor(p, l);
   if (p.src) img.src = p.src; else { img.src = BLANK; IMG.url(p, 'land', true).then(u => { if (S.ui.lb && S.ui.lb.photos[S.ui.lb.i] === p) img.src = u; }); }
 }
@@ -2121,7 +1764,7 @@ function listingRows() {
     <td class="c-acts"><div class="acts"><a class="ab sm" href="#admin-edit-${l.id}">${aico.edit}Edit</a>${l.status === 'draft' ? `<button class="ab sm" type="button" data-act="l-pub" data-id="${l.id}">Publish</button>` : ''}<div class="rowmenu" data-id="${l.id}"><button class="ab sm icon" type="button" data-act="rm" aria-haspopup="menu" aria-expanded="false" aria-label="More actions for ${esc(l.title)}">${aico.more}</button><div class="menu" role="menu">${menu(l)}</div></div></div></td></tr>`; }).join('')}
   </tbody></table>`;
 }
-function refreshListings() { const b = $('#lst-body'); if (b) { b.innerHTML = listingRows(); IMG.hydrate(b); } $$('.tabs [data-act="lst-tab"]').forEach(x => x.setAttribute('aria-selected', x.dataset.tab === S.ui.lstTab)); }
+function refreshListings() { const b = $('#lst-body'); if (b) { b.innerHTML = listingRows(); } $$('.tabs [data-act="lst-tab"]').forEach(x => x.setAttribute('aria-selected', x.dataset.tab === S.ui.lstTab)); }
 function closeRowMenus() { $$('.rowmenu.open').forEach(m => { m.classList.remove('open'); m.querySelector('[data-act="rm"]').setAttribute('aria-expanded', 'false'); }); }
 const rowL = el => S.listings.find(l => l.id === +(el.dataset.id || el.closest('[data-id]')?.dataset.id));
 function setStatus(l, s, msg) { l.status = s; l.updated = TODAY; S.ui.highlight = l.id; closeRowMenus(); if (location.hash === '#admin-listings') { refreshListings(); afterAdmin('admin-listings'); } else render(); toast(msg); }
@@ -2180,7 +1823,7 @@ function editView() {
       ${dfield('fees.other', 'Other fees', { opt: true, ph: 'e.g. Move-in fee of $150 charged by the building', hint: 'Anything else the renter pays to the owner or building.' })}
       <div class="feesum" id="fee-sum"></div>`)}
     ${sec('s-photos', 'Property photographs', 'Drag to reorder. The cover photo leads the listing and the card.', `<label class="drop" id="ph-drop" for="ph-file">${aico.upload}<b>Drop photos here or choose files</b><span>JPG, PNG or WebP. Photos stay in this browser for the demo.</span><input class="sr" type="file" id="ph-file" accept="image/*" multiple data-in="phfile"></label>
-      <div class="ph-tools"><span class="small muted" id="ph-count"></span><button class="ab sm" type="button" data-act="ph-sample">${ico.plus} Add sample renderings</button></div><p class="err" id="d-photos-err" style="color:var(--bad);font-size:13px"></p>
+      <div class="ph-tools"><span class="small muted" id="ph-count"></span><button class="ab sm" type="button" data-act="ph-sample">${ico.plus} Add sample photos</button></div><p class="err" id="d-photos-err" style="color:var(--bad);font-size:13px"></p>
       <div class="photos-grid" id="ph-grid"></div>`)}
     ${sec('s-pub', 'Publishing', '', `<label class="check"><input type="checkbox" data-in="d" data-k="featured" ${d.featured ? 'checked' : ''}> <span><b style="color:var(--ink)">Feature on the homepage</b><br>Featured listings appear first in the homepage selection.</span></label>
       <div class="ph-tools"><span>Current status: ${pill(d.status)}</span><div style="display:flex;gap:8px;flex-wrap:wrap">${editButtons()}</div></div>`)}
@@ -2203,7 +1846,7 @@ function asideHTML() {
 }
 function refreshEditor() {
   const d = S.draft; if (!d || !$('#edit-aside')) return;
-  $('#edit-aside').innerHTML = asideHTML(); IMG.hydrate($('#edit-aside'));
+  $('#edit-aside').innerHTML = asideHTML();
   const len = (d.description || '').trim().length, dc = $('#desc-count'); if (dc) { dc.textContent = `${len} characters${len < 80 ? `, at least 80 needed to publish` : ''}`; dc.classList.toggle('low', len < 80); }
   const fs = $('#fee-sum'); if (fs) { const t = (+d.rent || 0) + (+d.fees.deposit || 0) + (+d.fees.application || 0) + (+d.fees.brokerTenant || 0); fs.innerHTML = `<span>Renter pays before move-in: first month, deposit and fees</span><b>${money(t)}</b>`; }
   const pc = $('#ph-count'); if (pc) pc.textContent = d.photos.length ? `${d.photos.length} photo${d.photos.length > 1 ? 's' : ''}` : 'No photos yet';
@@ -2214,7 +1857,7 @@ function renderPhotos() {
     <div class="im">${pimg(p, 'land', altFor(p))}</div>${p.id === d.coverId ? '<span class="tag dark cb">Cover</span>' : ''}<span class="ix">${i + 1}</span>
     <div class="pbar">${p.id === d.coverId ? '<span class="xs muted" style="padding:0 6px">Cover photo</span>' : `<button class="ab sm" type="button" data-act="ph-cover" data-pid="${p.id}">${aico.star}Set as cover</button>`}<span class="sp"></span>
       <button class="ab icon ghost" type="button" data-act="ph-move" data-dir="-1" data-pid="${p.id}" aria-label="Move photo ${i + 1} earlier" ${i === 0 ? 'disabled' : ''}>${aico.left}</button><button class="ab icon ghost" type="button" data-act="ph-move" data-dir="1" data-pid="${p.id}" aria-label="Move photo ${i + 1} later" ${i === d.photos.length - 1 ? 'disabled' : ''}>${aico.right}</button><button class="ab icon ghost danger" type="button" data-act="ph-del" data-pid="${p.id}" aria-label="Remove photo ${i + 1}">${aico.trash}</button></div></div>`).join('');
-  IMG.hydrate(g); refreshEditor(); bindTiles();
+  refreshEditor(); bindTiles();
 }
 function addFiles(files) {
   const imgs = [...files].filter(f => f.type.startsWith('image/'));
@@ -2341,7 +1984,7 @@ Object.assign(ACT, {
   'l-arch-yes': (b) => { $('#dlg').close(); setStatus(S.listings.find(l => l.id === +b.dataset.id), 'archived', 'Listing archived'); },
   'demo-fill': () => { const keep = S.draft.photos; S.draft = Object.assign(blankDraft(), { title: 'Corner two-bedroom with south light', unit: '3A', address: 'Demo address, unit 3A', cross: 'Nassau Ave & Russell St', neighborhood: 'Greenpoint', lines: ['G'], rent: 4200, beds: 2, baths: 1, sqft: 850, floor: 3, amenities: ['Dishwasher', 'Laundry in building', 'Hardwood floors', 'Cats allowed', 'Heat and hot water included'], description: 'A corner two-bedroom on the third floor with windows facing south and east. Both bedrooms fit a queen bed, and the living room has space for a dining table.\n\nThe kitchen has a dishwasher and a gas range. Laundry is in the basement; McGolrick Park is two blocks away.', available: '2026-12-15', pets: 'Cats allowed', fees: { brokerTenant: 0, application: 20, deposit: 4200, other: '' }, photos: keep.length ? keep : ['room-living', 'room-bed', 'kitchen', 'facade-cream-top-gold'].map(newPhoto) }); S.draft.coverId = S.draft.photos[0].id; render(); toast('Filled with demo data'); },
   'dep-rent': () => { if (+S.draft.rent > 0) { S.draft.fees.deposit = +S.draft.rent; $('#d-fees-deposit').value = S.draft.rent; refreshEditor(); } else { toast('Enter the monthly rent first'); $('#d-rent').focus(); } },
-  'ph-sample': () => { const n = 3; for (let i = 0; i < n; i++) S.draft.photos.push(newPhoto(SCENES[Math.floor(Math.random() * SCENES.length)])); if (!S.draft.coverId) S.draft.coverId = S.draft.photos[0].id; renderPhotos(); $('#d-photos-err').textContent = ''; toast('Added 3 sample renderings'); },
+  'ph-sample': () => { const n = 3; for (let i = 0; i < n; i++) S.draft.photos.push(newPhoto(SCENES[Math.floor(Math.random() * SCENES.length)])); if (!S.draft.coverId) S.draft.coverId = S.draft.photos[0].id; renderPhotos(); $('#d-photos-err').textContent = ''; toast('Added 3 sample photos'); },
   'ph-cover': (b) => { S.draft.coverId = b.dataset.pid; renderPhotos(); toast('Cover photo updated'); $(`.ptile[data-pid="${b.dataset.pid}"] .pbar .ab`)?.focus(); },
   'ph-move': (b) => { const ph = S.draft.photos, i = ph.findIndex(p => p.id === b.dataset.pid), j = i + +b.dataset.dir; if (j < 0 || j >= ph.length) return; [ph[i], ph[j]] = [ph[j], ph[i]]; renderPhotos(); $(`.ptile[data-pid="${b.dataset.pid}"] [data-dir="${b.dataset.dir}"]`)?.focus(); },
   'ph-del': (b) => { const ph = S.draft.photos, i = ph.findIndex(p => p.id === b.dataset.pid); ph.splice(i, 1); if (S.draft.coverId === b.dataset.pid) S.draft.coverId = ph[0]?.id || null; renderPhotos(); toast('Photo removed'); },

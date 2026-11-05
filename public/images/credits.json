@@ -1,0 +1,122 @@
+[
+  {
+    "file": "images/nyc-fire-escapes.webp",
+    "photographer": "Aidan Murphy",
+    "source": "https://unsplash.com/photos/oQpGg_uRPXQ",
+    "download": "https://images.unsplash.com/photo-1685356601058-88bd261fb137?auto=format&fit=max&w=1800&h=1800&q=82&fm=jpg",
+    "alt": "New York apartment facade with exterior fire escapes",
+    "license": "https://unsplash.com/license",
+    "thumbnail": "images/nyc-fire-escapes-640.webp",
+    "width": 1800,
+    "height": 1202,
+    "thumbnailWidth": 640
+  },
+  {
+    "file": "images/nyc-sunny-street.webp",
+    "photographer": "Julian Ostarek",
+    "source": "https://unsplash.com/photos/A1gUvBmyRIY",
+    "download": "https://images.unsplash.com/photo-1775656498849-9530691e8efb?auto=format&fit=max&w=1800&h=1800&q=82&fm=jpg",
+    "alt": "Apartment buildings and fire escapes on a sunny New York street",
+    "license": "https://unsplash.com/license",
+    "thumbnail": "images/nyc-sunny-street-640.webp",
+    "width": 1013,
+    "height": 1800,
+    "thumbnailWidth": 640
+  },
+  {
+    "file": "images/nyc-brownstones.webp",
+    "photographer": "Clay LeConey",
+    "source": "https://unsplash.com/photos/ji6L96WF67s",
+    "download": "https://images.unsplash.com/photo-1753078403803-7f32bcbec3ff?auto=format&fit=max&w=1800&h=1800&q=82&fm=jpg",
+    "alt": "Historic brownstone buildings in the West Village, New York",
+    "license": "https://unsplash.com/license",
+    "thumbnail": "images/nyc-brownstones-640.webp",
+    "width": 1800,
+    "height": 1185,
+    "thumbnailWidth": 640
+  },
+  {
+    "file": "images/brooklyn-brick.webp",
+    "photographer": "Jon Tyson",
+    "source": "https://unsplash.com/photos/7Iflw8kaZIQ",
+    "download": "https://images.unsplash.com/photo-1776983585302-21fbf91e5a6f?auto=format&fit=max&w=1800&h=1800&q=82&fm=jpg",
+    "alt": "Brick apartment building with exterior fire escapes in New York",
+    "license": "https://unsplash.com/license",
+    "thumbnail": "images/brooklyn-brick-640.webp",
+    "width": 1348,
+    "height": 1800,
+    "thumbnailWidth": 640
+  },
+  {
+    "file": "images/living-room.webp",
+    "photographer": "deborah cortelazzi",
+    "source": "https://unsplash.com/photos/gREquCUXQLI",
+    "download": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=max&w=1800&h=1800&q=82&fm=jpg",
+    "alt": "Sunlit living and dining room with a sofa and wood furniture",
+    "license": "https://unsplash.com/license",
+    "thumbnail": "images/living-room-640.webp",
+    "width": 1800,
+    "height": 1200,
+    "thumbnailWidth": 640
+  },
+  {
+    "file": "images/apartment-interior.webp",
+    "photographer": "Irena Oze",
+    "source": "https://unsplash.com/photos/QLxwC1Z-ceM",
+    "download": "https://images.unsplash.com/photo-1781249144315-8db5ee041f7d?auto=format&fit=max&w=1800&h=1800&q=82&fm=jpg",
+    "alt": "Apartment interior with a kitchen, living area and warm wood finishes",
+    "license": "https://unsplash.com/license",
+    "thumbnail": "images/apartment-interior-640.webp",
+    "width": 1800,
+    "height": 1200,
+    "thumbnailWidth": 640
+  },
+  {
+    "file": "images/kitchen-living.webp",
+    "photographer": "Lisa Anna",
+    "source": "https://unsplash.com/photos/OqZaRVv3_zE",
+    "download": "https://images.unsplash.com/photo-1723641285881-31d001a0dc4b?auto=format&fit=max&w=1800&h=1800&q=82&fm=jpg",
+    "alt": "Open kitchen and living area in a one-bedroom apartment",
+    "license": "https://unsplash.com/license",
+    "thumbnail": "images/kitchen-living-640.webp",
+    "width": 1800,
+    "height": 1350,
+    "thumbnailWidth": 640
+  },
+  {
+    "file": "images/bedroom-grey.webp",
+    "photographer": "Francesca Tosolini",
+    "source": "https://unsplash.com/photos/hCU4fimRW-c",
+    "download": "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?auto=format&fit=max&w=1800&h=1800&q=82&fm=jpg",
+    "alt": "Bedroom with grey walls, a large bed and a patterned rug",
+    "license": "https://unsplash.com/license",
+    "thumbnail": "images/bedroom-grey-640.webp",
+    "width": 1800,
+    "height": 1200,
+    "thumbnailWidth": 640
+  },
+  {
+    "file": "images/bedroom-four-poster.webp",
+    "photographer": "Francesca Tosolini",
+    "source": "https://unsplash.com/photos/y2in-QgWrdU",
+    "download": "https://images.unsplash.com/photo-1574286962416-d746e38567bb?auto=format&fit=max&w=1800&h=1800&q=82&fm=jpg",
+    "alt": "Bright bedroom with a white and black four-poster bed",
+    "license": "https://unsplash.com/license",
+    "thumbnail": "images/bedroom-four-poster-640.webp",
+    "width": 1337,
+    "height": 1800,
+    "thumbnailWidth": 640
+  },
+  {
+    "file": "images/nyc-skyline.webp",
+    "photographer": "Zoshua Colah",
+    "source": "https://unsplash.com/photos/k-rwQAZS0Fg",
+    "download": "https://images.unsplash.com/photo-1707905729981-c89310889b03?auto=format&fit=max&w=1800&h=1800&q=82&fm=jpg",
+    "alt": "New York City skyline seen above nearby rooftops",
+    "license": "https://unsplash.com/license",
+    "thumbnail": "images/nyc-skyline-640.webp",
+    "width": 1800,
+    "height": 1200,
+    "thumbnailWidth": 640
+  }
+]
