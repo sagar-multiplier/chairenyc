@@ -15,7 +15,7 @@
   --ok:#2E6A49; --ok-bg:#E3EEE6; --warn:#875A10; --warn-bg:#F5ECD9; --bad:#A3392B; --bad-bg:#F6E3DF; --info:#3D5568; --info-bg:#E4EAEF;
   --serif:"Newsreader","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
   --sans:"Hanken Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --max:1320px; --gut:clamp(20px,5.5vw,80px); --hdr:76px;
+  --max:1400px; --gut:clamp(20px,4vw,56px); --hdr:76px;
   --wm-serif:"Cormorant Garamond","Newsreader",Georgia,serif; --wm-brown:#6E5641;
   /* Layout idea: left-aligned editorial grid; photography bleeds off the right edge; the search bar overlaps the hero image */
   color-scheme:light;
@@ -42,7 +42,7 @@ button{cursor:pointer}
 img.ph:not([data-g]){opacity:1}
 
 /* type scale */
-.t-hero{font-size:clamp(44px,6.1vw,90px);line-height:.98;letter-spacing:-.028em;font-weight:350;font-variation-settings:"opsz" 72}
+.t-hero{font-size:clamp(44px,5.4vw,84px);line-height:.98;letter-spacing:-.028em;font-weight:350;font-variation-settings:"opsz" 72}
 .t-1{font-size:clamp(36px,4.4vw,62px);line-height:1.02;letter-spacing:-.022em;font-weight:350}
 .t-2{font-size:clamp(28px,3vw,42px);line-height:1.08;letter-spacing:-.018em}
 .t-3{font-size:clamp(22px,2vw,28px);line-height:1.15}
@@ -112,14 +112,13 @@ img.ph:not([data-g]){opacity:1}
 
 /* hero */
 .hero{position:relative;overflow:hidden;padding-top:clamp(20px,3.5vw,48px)}
-.hero-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,4vw,72px);align-items:stretch}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,4.5vw,80px);align-items:stretch}
 .hero-copy{display:flex;flex-direction:column;justify-content:center;gap:26px;padding:clamp(12px,3vw,40px) 0 clamp(110px,10vw,150px)}
 .hero-copy .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
-.hero-fig{position:relative;margin:0 calc(-1 * var(--gut)) 0 0;min-height:clamp(480px,46vw,700px)}
-@media (min-width:1400px){.hero-fig{margin-right:calc((100vw - var(--max))/-2 - var(--gut))}}
+.hero-fig{position:relative;margin:0;min-height:clamp(460px,42vw,660px);overflow:hidden;border-radius:2px}
 .hero-fig img{position:absolute;inset:0;animation:heroin 1.8s cubic-bezier(.2,.7,.2,1) both}
 @keyframes heroin{from{transform:scale(1.045)}to{transform:none}}
-.hero-fig figcaption{position:absolute;right:calc(var(--gut) + 4px);top:16px;font-size:12px;color:rgba(255,255,255,.92);background:rgba(36,43,41,.55);padding:5px 9px;border-radius:2px}
+.hero-fig figcaption{position:absolute;right:16px;top:16px;font-size:12px;color:rgba(255,255,255,.92);background:rgba(36,43,41,.55);padding:5px 9px;border-radius:2px}
 .search{position:relative;z-index:3;margin-top:-92px;width:min(100%,1000px);background:var(--paper);border:1px solid var(--stone);box-shadow:0 18px 40px -24px rgba(36,43,41,.35);display:grid;grid-template-columns:1.3fr 1fr 1fr auto;align-items:stretch}
 .search .sf{display:flex;flex-direction:column;justify-content:center;padding:14px 20px 12px;border-right:1px solid var(--stone-2);min-width:0}
 .search label{font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:2px}
@@ -181,9 +180,8 @@ img.ph:not([data-g]){opacity:1}
 /* owner band */
 .band{background:var(--ink);color:var(--ivory);position:relative;overflow:hidden}
 .band .lede,.band .muted{color:rgba(247,245,240,.78)}
-.band-grid{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:clamp(32px,5vw,88px);align-items:center}
-.band-media{position:relative;margin-left:calc(-1 * var(--gut));aspect-ratio:5/4;overflow:hidden}
-@media (min-width:1400px){.band-media{margin-left:calc((100vw - var(--max))/-2 - var(--gut))}}
+.band-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,4.5vw,80px);align-items:center;padding-top:clamp(56px,7vw,104px);padding-bottom:clamp(56px,7vw,104px)}
+.band-media{position:relative;aspect-ratio:5/4;overflow:hidden;border-radius:2px}
 .band-media img{position:absolute;inset:0}
 .band-list{display:grid;margin:28px 0 34px;border-top:1px solid rgba(247,245,240,.2)}
 .band-list li{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:16px 0;border-bottom:1px solid rgba(247,245,240,.2);font-size:15.5px}
@@ -345,11 +343,10 @@ img.ph:not([data-g]){opacity:1}
 
 /* owners */
 .o-hero{padding:clamp(36px,5vw,72px) 0 0;overflow:hidden}
-.o-hero-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(28px,4vw,72px);align-items:end}
+.o-hero-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(32px,4.5vw,80px);align-items:end}
 .o-hero h1{font-size:clamp(44px,6vw,88px);line-height:.98;letter-spacing:-.028em;font-weight:350}
 .o-hero .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
-.o-hero-fig{aspect-ratio:4/5;overflow:hidden;margin:0 calc(-1 * var(--gut)) 0 0;position:relative}
-@media (min-width:1400px){.o-hero-fig{margin-right:calc((100vw - var(--max))/-2 - var(--gut))}}
+.o-hero-fig{aspect-ratio:4/5;overflow:hidden;margin:0;position:relative;border-radius:2px}
 .o-hero-fig img{position:absolute;inset:0}
 .o-intro{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,4vw,72px);padding:clamp(48px,6vw,88px) 0;border-bottom:1px solid var(--stone)}
 .o-intro p.big{font:400 clamp(22px,2.2vw,30px)/1.38 var(--serif);letter-spacing:-.008em}
@@ -1585,7 +1582,7 @@ function viewHome() {
 
   <section class="band" aria-labelledby="own-h"><div class="wrap band-grid">
     <div class="band-media">${pimg({ g: 'facade-lime-dusk-top', s: 11 }, 'land', 'Illustrative rendering of a limestone facade at dusk')}</div>
-    <div class="sec">
+    <div>
       <h2 class="t-1" id="own-h">${esc(c.ownerTitle)}</h2>
       <p class="lede" style="margin-top:20px">${esc(c.ownerBody)}</p>
       <ul class="band-list">
